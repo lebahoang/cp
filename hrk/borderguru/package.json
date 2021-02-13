@@ -1,0 +1,10 @@
+{
+  "name": "hoangleba",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^6.2.4"
+  }
+}

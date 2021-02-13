@@ -1,0 +1,10 @@
+8
+a l m
+b
+c
+d a b c
+z d
+k d
+l
+m
+0

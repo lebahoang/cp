@@ -1,0 +1,14 @@
+1 Why did you pick your particular your design? What assumptions did you make, and what tradeoffs did you consider?
+
+My design is the combination between a Nodejs application and a Postgres db, at the beginning I actually wanted to do something much simpler, I intended to just do a Nodejs application with an in-memory data structure (Ex a dictionary) to performing 4 asked questions , but then I decided to use Postgres db to perform these questions, the reason is it will be my decision in real life when I have to deal with this kind of task in order to achieve good performance, stability, scalability when data grows. Postgres and SQL databases in general are good solutions for tasks like 4 questions here (if data grows massively then moving to noSQL solution which still offers SQL query language like Hbase+Hive/Pig will be my choice). The trade-off of this design is more jobs on setting up/maintenance when I have to setup Postgres database, plus coding the Nodejs application
+
+
+
+2 What do you like (and dislike) about Node/Javascript compared to other programming languages?
+
+The things I like most from Node/javascript are it's flexibility and easy-to-run, a good dependencies management tool (npm), at the system side Node provides a very good way to deal with IO blocking issue which benefits a lot of applications, web applicaiton, Rest api service are some examples. Node asynchronous model is more and more to prove it's strength in backend development when it allows server code serves more than some traditional technique like php or java thread pool web server.
+
+
+The first thing I dislike most is "callback hell" issue when you code a Node program, you have to be careful when you code it otherwise your code will be messy and very difficult to read and understand. The callback hell problem is being solved by promise and a new feature async/await, and I think these features help developers sufficiently in coding a readable and maintainable code. I myself have a coding convention that with promise I will try to flatten my code as much as possible, in general I will try to code no more than 2 nested "then"
+
+The second thing I dislike is async way of how Node program runs,it takes time to you to get familiar with and sometime it is hard to debug Node's code.

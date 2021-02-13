@@ -1,0 +1,12 @@
+1
+5 5 6
+Q A 1
+R B 1
+R C 1
+N D 1
+N C 2
+Q D 4
+R B 4
+R C 4
+N A 4
+N A 3

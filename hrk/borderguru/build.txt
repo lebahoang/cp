@@ -1,0 +1,19 @@
+Unpack my archive file to a folder, it contains 5 files
+— solution.js: my solution in Nodejs
+— package.json: dependencies managed via npm
+— sample.txt: testing data
+— answer.txt: text files contain my answer to 2 questions 
+— build.txt: build instruction
+
+ 
+My solution requires a Postgres server running and Nodejs version >= 4.x, npm version >= 3.10.x. To simplify you can install Postgres at the same machine where you run the code. Here a step by step instruction to install a Postgres server via Docker using Postgres 9.4
+
+— docker run --name postgres -e POSTGRES_PASSWORD=hoangleba -p 5432:5432 -d postgres:9.4
+
+After that you can create database named borderguru vis psql
+
+— psql -h 127.0.0.1 -U postgres -c "create database borderguru;" (input password is hoangleba)
+
+— Together with postgres, Node application requires some dependencies, you can install them via command "npm install"
+
+After completed 3 steps, you can run my Node application by cmd "node solution.js"

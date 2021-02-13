@@ -1,0 +1,2 @@
+- command to compile and run:
+g++ -std=c++14 -stdlib=libc++ -O2 -o s.out 1.cpp && ./s.out < [input file path]

@@ -1,0 +1,9 @@
+- set bit j from 0 to 1: A |= (1 << j)
+- set bit j from 1 to 0: A &= ~(1 << j)
+- check whether bit j is 1 or not: A & (1 << j) != 0
+- toggle bit j in A: A ^ (1 << j)
+- get value when all is bit 1: (1 << n)-1 Example 111 = (1<<3)-1
+- iterate through all subsets of a subset y (not including empty set):
+	for ( x = y; x > 0; x = ( y & (x-1) ) )
+
+- 2^n : 1 << n

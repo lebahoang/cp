@@ -1,0 +1,6 @@
+1. What ways did you test your algorithm and what key metrics were you testing for?
+I tested my algorithm by creating a set of testcases, in which I inputed all cases I could think off and checked my algorithm outputs be as my expectation, these testcases will test both correctness and efficency of my algorithm, you could find them in 2 files (small.txt for testing correctness and large.txt for testing more of efficency). The key metrics I tested are the correctness, the efficency (running complexity, space complexity), and how easy to implement the algorithm.
+
+
+2. Was there anything you found specifically challenging or time consuming?
+I found out that the most time consuming is to understand the problem this challenge wants to solve, it is not the vanila travelling sale man problem but a problem with quite different constraints and requirements, after trying to understand the challenge requirement then finding the algorithm and a way to easily implement it is a second time-consuming step, but this step is easier than the understanding chanllege requirement step. 
