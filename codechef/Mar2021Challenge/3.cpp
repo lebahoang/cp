@@ -14,67 +14,6 @@ using namespace std;
 using ll = long long;
 const string Y = "Yes";
 const string N = "No";
-
-bool run_left_to_right(int r, int c, int x, vector<vector<int>>& a, vector<vector<int>>& b) {
-    for (int i = 0; i < r; i++) {
-        for (int j = 0; j < c; j++) {
-            if (a[i][j] == b[i][j]) continue;
-            if (j+x > c) continue;
-            int t = b[i][j]-a[i][j];
-            for (int k = 0; k < x; k++) {
-                a[i][j+k] += t;
-            }
-        }
-    }
-    for (int j = 0; j < c; j++) {
-        for (int i = 0; i < r; i++) {
-            if (a[i][j] == b[i][j]) continue;
-            if (i+x > r) continue;
-            int t = b[i][j]-a[i][j];
-            for (int k = 0; k < x; k++) {
-                a[i+k][j] += t;
-            }
-        }
-    }
-    for (int i = 0; i < r; i++) {
-        for (int j = 0; j < c; j++) {
-            if (a[i][j] != b[i][j]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-bool run_right_to_left(int r, int c, int x, vector<vector<int>>& a, vector<vector<int>>& b) {
-    for (int i = 0; i < r; i++) {
-        for (int j = c-1; j >= 0; j--) {
-            if (a[i][j] == b[i][j]) continue;
-            if (j-x+1 < 0) continue;
-            int t = b[i][j]-a[i][j];
-            for (int k = 0; k < x; k++) {
-                a[i][j-k] += t;
-            }
-        }
-    }
-    for (int j = 0; j < c; j++) {
-        for (int i = 0; i < r; i++) {
-            if (a[i][j] == b[i][j]) continue;
-            if (i+x > r) continue;
-            int t = b[i][j]-a[i][j];
-            for (int k = 0; k < x; k++) {
-                a[i+k][j] += t;
-            }
-        }
-    }
-    for (int i = 0; i < r; i++) {
-        for (int j = 0; j < c; j++) {
-            if (a[i][j] != b[i][j]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
 int main() {
     int t;
     cin >> t;
@@ -97,15 +36,34 @@ int main() {
                 totalB += b[i][j];
             }
         }
-        vector<vector<int>> a2(a.begin(), a.end());
-        vector<vector<int>> b2(b.begin(), b.end());
-        if ((totalB-totalA)%x != 0) {
-            printf("%s\n", N.c_str());
-            continue;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (a[i][j] == b[i][j]) continue;
+                if (j+x > c) continue;
+                int t = b[i][j]-a[i][j];
+                for (int k = 0; k < x; k++) {
+                    a[i][j+k] += t;
+                }
+            }
         }
-        bool done = run_left_to_right(r, c, x, a, b);
-        if (!done) {
-            done = run_right_to_left(r,c,x,a2,b2);
+        for (int j = 0; j < c; j++) {
+            for (int i = 0; i < r; i++) {
+                if (a[i][j] == b[i][j]) continue;
+                if (i+x > r) continue;
+                int t = b[i][j]-a[i][j];
+                for (int k = 0; k < x; k++) {
+                    a[i+k][j] += t;
+                }
+            }
+        }
+        bool done = true;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (a[i][j] != b[i][j]) {
+                    done = false;
+                    break;
+                }
+            }
         }
         if (done) {
             printf("%s\n", Y.c_str());

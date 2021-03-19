@@ -98,7 +98,6 @@ func primeFactors(n int) ([]int, int) {
 		} else {
 			c++
 		}
-		end = (*tracebackNodes)[i]
 	}
 	rs = append(rs, c)
 	fmt.Println(pfs)
