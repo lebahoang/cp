@@ -12,44 +12,72 @@
 // g++ -std=c++14 -O2 -o s.out 2.cpp && ./s.out
 using namespace std;
 using ll = long long;
-int find(int start, vector<vector<int>>& events, int n) {
-    
+int search(int end, vector<vector<int>>& events, int i, int n) {
+    int l = i;
+    int r = n-1;
+    while (true) {
+        if (l > r) break;
+        int mid = (l+r)/2;
+        if (events[mid][0] > end && events[mid-1][0] <= end) {
+            return mid;
+        } else if (events[mid][0] <= end) {
+            l = mid+1;
+        } else {
+            r = mid-1;
+        }
+    }
+    return -1;
 }
-vector<vector<ll>> solve(vector<vector<int>>& events, int k) {
+// vector<vector<ll>> solve(vector<vector<int>>& events, int k) {
+int solve(vector<vector<int>>& events, int k) {
     int n = events.size();
     sort(events.begin(), events.end(), [&](vector<int> a, vector<int> b){
         if (a[0] < b[0]) return true;
         else if (a[0] > b[0]) return false;
         return a[1] < b[1];
     });
-    for (vector<int> x: events) {
-        printf("%d %d %d\n", x[0], x[1], x[2]);
+    // for (vector<int> x: events) {
+    //     printf("%d %d %d\n", x[0], x[1], x[2]);
+    // }
+    vector<int> next_event(n+1, -1);
+    for (int i = 0; i < n; i++) {
+        int ind = search(events[i][1], events, i+1, n);
+        next_event[i] = ind;
     }
     vector<vector<ll>> dp(n+1, vector<ll>(k+1, 0));
     ll rs = 0;
-    for (int i = 0; i < n; i++) {
-        for (int j = 1; j <= k; j++) {
+    for (int j = 1; j <= k; j++) {
+        for (int i = 0; i < n; i++) {
+            int ind = next_event[i];
             if (j == 1) {
                 dp[i][j] = events[i][2];
+                rs = max(rs, dp[i][j]);
             } else {
-                int ind = find(events[i][0], events, n);
+                if (ind >= 0) {
+                    // if (ind == 5 && j == 2) printf("ind %d, j %d, i %d, dp %lld\n", ind, j, i, dp[ind][j]);
+                    for (int x = ind; x < n; x++) {
+                        if (dp[i][j-1] > 0) {
+                            dp[x][j] = max(dp[x][j], dp[i][j-1] + events[x][2]);
+                            rs = max(rs, dp[x][j]);
+                        }
+                    }
+                }
             }
-            rs = max(rs, dp[i][j]);
         }
     }
-    // return (int)rs;
-    return dp;
+    // return dp;
+    return (int)rs;
 }
 vector<vector<ll>> bf(vector<vector<int>>& events, int k) {
     int n = events.size();
-    sort(events.begin(), events.end(), [&](vector<int> a, vector<int> b){
+    sort(events.begin(), events.end(), [](vector<int>& a, vector<int>& b){
         if (a[0] < b[0]) return true;
         else if (a[0] > b[0]) return false;
         return a[1] < b[1];
     });
-    for (vector<int> x: events) {
-        printf("%d %d %d\n", x[0], x[1], x[2]);
-    }
+    // for (vector<int> x: events) {
+    //     printf("%d %d %d\n", x[0], x[1], x[2]);
+    // }
     vector<vector<ll>> dp(n+1, vector<ll>(k+1, 0));
     ll rs = 0;
     for (int i = 0; i < n; i++) {
@@ -57,9 +85,6 @@ vector<vector<ll>> bf(vector<vector<int>>& events, int k) {
             if (j == 1) {
                 dp[i][j] = events[i][2];
             } else {
-                int ind = find(events[i][0], events, n);
-                // assert(ind < i);
-                // printf("i %d, ind %d\n", i, ind);
                 ll t = -1e12+7;
                 for (int x = 0; x <= i-1; x++) {
                     if (events[x][1] < events[i][0] && dp[x][j-1] > t) t = dp[x][j-1];
@@ -107,16 +132,17 @@ int main() {
         {941444720,951429172,939290},
     };
     int k = 10;
-    auto dp1 = solve(events, k);
-    auto dp2 = bf(events, k);
-    for (int i = 0; i < (int)events.size(); i++) {
-        for (int j = 1; j <= k; j++) {
-            if (dp1[i][j] != dp2[i][j]) {
-                printf("i %d, j %d, %lld %lld\n", i, j, dp1[i][j], dp2[i][j]);
-                break;
-            }
-        }
-    }
+    printf("%d\n", solve(events, k));
+    // auto dp1 = solve(events, k);
+    // auto dp2 = bf(events, k);
+    // for (int i = 0; i < (int)events.size(); i++) {
+    //     for (int j = 1; j <= k; j++) {
+    //         if (dp1[i][j] != dp2[i][j]) {
+    //             printf("i %d, j %d, %lld %lld\n", i, j, dp1[i][j], dp2[i][j]);
+    //             break;
+    //         }
+    //     }
+    // }
     //printf("%d %d\n", , bf(events, k));
     // vector<vector<int>> events = {{1,100,100}, {2,2,2}, {3,30,3},{4,4,4},{5,5,5},{6,6,6},{7,7,7}};
     // printf("%d\n", find(6, events, (int)events.size()));
