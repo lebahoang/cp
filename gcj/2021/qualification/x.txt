@@ -1,8 +1,27 @@
+5
+4 6
+2 1
+7 12
+7 2
+100 1000
+
+
+4
+4
+1 2 3 4
+4
+4 1 2 3
+4
+3 4 1 2
+4
+2 3 4 1
+
+
 2
 8
 3 5 2 6 9 10 7 8
 9
-3 5 2 6 9 10 7 8 4
+3 5 2 6 9 10 7 8 1
 
 
 2 5 3 6 9 10 7 8 4
@@ -14,3 +33,12 @@ new ith position = (n-1) - (ith position - ith)
 new ith position cost = new ith position - (i+1)th position + 1
 
 do dfs
+
+5 2
+
+new added cost = 1-0+1 = 2
+ith position = 0
+new ith position = 1-(0 - 0) = 1
+new ith position cost = 1-1
+
+_ _ _ 1
