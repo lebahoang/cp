@@ -35,63 +35,45 @@ int calculate(vector<int> a) {
     return total;
 }
 
+// n = 7, c = 18
+// step 0: 2 4 3 x x x 1
+// step 1: 1 x x x 3 4 2, c = 7
+// step 2: 1 2 4 3 x x x, c = 6
+// step 3: 1 2 3 4 x x x, c = 2
+// step 4: 1 2 3 4 x x x, c = 1
+
 string solve(int n, int c) {
     if (c < n-1 || c > (n*(n+1)/2)) {
         return " IMPOSSIBLE";
     } 
-    if (c == n-1) {
-        string x = "";
-        for (int i = 1; i <= n; i++) x += " " + to_string(i);
-        return x;
-    }
-    if (c == n) {
-        string x = " 2 1";
-        for (int i = 3; i <= n; i++) {
-            x += " " + to_string(i);
-        }
-        return x;
-    }
-
-    int nn = n;
-    vector<int> rs(n+1, 0);
-    rs[1] = n;
+    // if (c == n-1) {
+    //     string x = "";
+    //     for (int i = 1; i <= n; i++) x += " " + to_string(i);
+    //     return x;
+    // }
+    // if (c == n) {
+    //     string x = " 2 1";
+    //     for (int i = 3; i <= n; i++) {
+    //         x += " " + to_string(i);
+    //     }
+    //     return x;
+    // }
     vector<vector<int>> step(n+1, vector<int>(n+1, 0));
-    step[1][1] = n;
-    step[2][1] = 1;
-    int place = c-n-(n-3);
-    c -= n;
-    for (int i = 2; i < nn; i++) {
-        step[i][i] = i+place-1;
-        for (int j = i-1; j >= 1; j--) {
-            step[j][i] = step[j][i-1]-(step[j+1][i]-step[j+1][i-1]);
-        }
-        printf("step %d\n", i);
-        for (int j = 1; j <= i-1; j++) {
-            vector<int> t(n+1, 0);
-            for (int k = 1; k <= nn; k++) {
-                t[step[j][k]] = k;
-            }
-            for (int k = 1; k <= nn; k++) {
-                printf("%d ", t[k]);
-            }
-            printf("\n");
-        }
-        printf("----------------\n");
-        step[i+1][i] = i;
-        n--;
-        place = c-n-(n-3);
-        c -= n;
-    }
-    for (int i = 1; i <= nn; i++) {
+    vector<int> rs(n+1, 0);
+    int left = n;
+
+
+    
+    for (int i = 1; i <= n; i++) {
         rs[step[1][i]] = i;
     }
-    for (int x = 1; x <= nn; x++) {
+    for (int x = 1; x <= n; x++) {
         printf("%d ", rs[x]);
     }
     printf("\n");
     printf("Total cost %d\n", calculate(rs));
     string x = "";
-    for (int i = 1; i <= nn; i++) {
+    for (int i = 1; i <= n; i++) {
         x += " " + to_string(rs[i]);
     }
     return x;
