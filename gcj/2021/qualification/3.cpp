@@ -43,7 +43,7 @@ int calculate(vector<int> a) {
 // step 4: 1 2 3 4 x x x, c = 1
 
 string solve(int n, int c) {
-    if (c < n-1 || c > (n*(n+1)/2)) {
+    if (c < n-1 || c > (n*(n+1)/2-1)) {
         return " IMPOSSIBLE";
     } 
     // if (c == n-1) {
@@ -61,17 +61,47 @@ string solve(int n, int c) {
     vector<vector<int>> step(n+1, vector<int>(n+1, 0));
     vector<int> rs(n+1, 0);
     int left = n;
-
-
-    
+    int cost = 0;
+    for (int i = 1; i < n; i++) {
+        step[i][i] = i;
+        cost = min(n-i+1, c-(left-2));
+        step[i-1][i] = step[i][i]+cost-1;
+        c -= cost;
+        left--;
+        for (int j = i-2; j >= 0; j--) {
+            // int diff = step[j][j]-step[j+1][j];
+            int diff2 = step[j+1][i] - step[j+1][j+1];
+            if (step[j+1][i] <= step[j][j+1]) {
+                step[j][i] = step[j][j+1]-diff2;
+            } else {
+                step[j][i] = step[j+1][i];
+            }
+        }
+        // printf("i %d, cost %d\n", i, cost);
+        // for (int j = 0; j <= i; j++) {
+        //     vector<int> xx(n+1, 0);
+        //     for (int k = 1; k <= n; k++) {
+        //         xx[step[j][k]] = k;
+        //     }
+        //     printf("Step %d: ", j);
+        //     for (int k = 1; k <= n; k++) {
+        //         printf("%d ", xx[k]);
+        //     }
+        //     printf("\n");
+        // }
+    }
     for (int i = 1; i <= n; i++) {
-        rs[step[1][i]] = i;
+        rs[step[0][i]] = i;
     }
-    for (int x = 1; x <= n; x++) {
-        printf("%d ", rs[x]);
+    for (int i = 1; i <= n; i++) {
+        if (rs[i] == 0) rs[i] = n; 
     }
-    printf("\n");
-    printf("Total cost %d\n", calculate(rs));
+    
+    // for (int x = 1; x <= n; x++) {
+    //     printf("%d ", rs[x]);
+    // }
+    // printf("\n");
+    // printf("Total cost %d\n", calculate(rs));
     string x = "";
     for (int i = 1; i <= n; i++) {
         x += " " + to_string(rs[i]);
