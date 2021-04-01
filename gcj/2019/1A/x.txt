@@ -1,3 +1,10 @@
+3
+2 2
+2 5
+19 19
+
+
+
 1
 4
 X
@@ -34,6 +41,10 @@ PROL
 CODEJAM
 JAM
 HAM
+1
+2 5
+
+
 NALAM
 HUM
 NOLOM
