@@ -20,10 +20,14 @@ import random
 #             arr[i][j] = max(a,b) + random.randint(5,10)
 #     for t in arr:
 #         print(' '.join([str(x) for x in t]))
-t = 1
-s = ''
-for _ in range(2000000):
-    t = random.randint(0,1)
-    s += str(t)
+t = 100
 print(t)
-print(s)
+for _ in range(t):
+    s = ''
+    for i in range(10):
+        if i == 0:
+            t = 1
+        else:
+            t = random.randint(0,1)
+        s += str(t)
+    print(s)
