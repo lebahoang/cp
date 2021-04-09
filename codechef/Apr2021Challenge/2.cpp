@@ -116,16 +116,16 @@ string solve(string s) {
     return rs;
 }
 
-string addOne(string x) {
-    char add = '1';
-    int n = x.length();
-    vector<char> rs(n+1, '\0');
-    for (int i = n-1; i >= 0; i--) {
-        if (x[i] == '0' && add == '1') {
-            rs[i+1]
-        }
-    }
-}
+// string addOne(string x) {
+//     char add = '1';
+//     int n = x.length();
+//     vector<char> rs(n+1, '\0');
+//     for (int i = n-1; i >= 0; i--) {
+//         if (x[i] == '0' && add == '1') {
+//             rs[i+1]
+//         }
+//     }
+// }
 
 string solve2(string s) {
     int n = s.length();
