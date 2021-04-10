@@ -23,11 +23,21 @@ import random
 t = 100
 print(t)
 for _ in range(t):
-    s = ''
-    for i in range(10):
-        if i == 0:
-            t = 1
-        else:
-            t = random.randint(0,1)
-        s += str(t)
-    print(s)
+    n = 4
+    m = 6
+    k = 1
+    print(n,m,k)
+    arr = []
+    for _ in range(n):
+        arr.append(str(random.randint(-100, 100)))
+    print(' '.join(arr))
+    dd = {}
+    for _ in range(m):
+        while True:
+            u = random.randint(1, n)
+            v = random.randint(u, n)
+            if (u,v) not in dd:
+                d = random.randint(-100, 100)
+                dd[u,v] = 1
+                print(u,v,d)
+                break
