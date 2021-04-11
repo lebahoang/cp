@@ -147,14 +147,14 @@ string solve2(string s) {
 }
 
 int main() {
-    // int t;
-    // cin >> t;
-    // for (int cs = 0; cs < t; cs++) {
-    //     string s;
-    //     cin >> s;
-    //     auto t = bf(s);
-    //     printf("prev %s, bf %s, solve %s\n", bin(t.second).c_str(), t.first.c_str(), solve(s).c_str());
-    // }
-    printf("%s\n", solve2("10000").c_str());
+    int t;
+    cin >> t;
+    for (int cs = 0; cs < t; cs++) {
+        string s;
+        cin >> s;
+        auto t = bf(s);
+        // printf("prev %s, bf %s, solve %s\n", bin(t.second).c_str(), t.first.c_str(), solve(s).c_str());
+        printf("%s\n", t.first.c_str());
+    }
     return 0;
 }

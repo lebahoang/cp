@@ -20,12 +20,12 @@ import random
 #             arr[i][j] = max(a,b) + random.randint(5,10)
 #     for t in arr:
 #         print(' '.join([str(x) for x in t]))
-t = 100
+t = 10
 print(t)
 for _ in range(t):
-    n = 4
-    m = 6
-    k = 1
+    n = 10
+    m = 10
+    k = 100
     print(n,m,k)
     arr = []
     for _ in range(n):
