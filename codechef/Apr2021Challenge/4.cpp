@@ -7,6 +7,7 @@
 #include <stack>
 #include <queue>
 #include <vector>
+#include <set>
 #include <utility>
 
 // g++ -std=c++14 -O2 -o s.out 3.cpp && ./s.out < x.txt
@@ -18,9 +19,8 @@ struct I {
     ll d;
 };
 struct Y {
-    int i;
-    int j;
-    ll p;
+    set<ll> s;
+    priority_queue<ll, vector<ll>, greater<ll>> q;
 };
 vector<vector<ll>> getInterval(int n, vector<ll>& g, vector<I>& interval) {
     vector<vector<ll>> rs(n+5, vector<ll>(n+5, 0));
@@ -71,24 +71,23 @@ vector<ll> bf(int n, int m, int k, vector<ll>& g, vector<ll>& prefix, vector<I>&
     });
     return rs;
 }
-void collectResult(vector<ll>& rs, priority_queue<ll, vector<ll>, greater<ll>>& pq, ll add) {
-    while (!pq.empty()) {
-        ll x = pq.top();
-        pq.pop();
-        rs.push_back(x+add);
+ll setBits(ll x, int from, int to) {
+    ll y = x;
+    for (int i = from; i <= to; i++) {
+        y |= 1ll << i;
     }
+    return y;
 }
 ll f(int i, int j, int k,
      vector<ll>& g, vector<ll>& prefix,
      vector<vector<ll>>& intervalAdd,
      vector<vector<ll>>& dp,
-     vector<vector<priority_queue<ll, vector<ll>, greater<ll>>>>& m) {
+     vector<vector<Y>>& m) {
     
     if (dp[i][j] != -1e12) {
         return dp[i][j];
     }
     if (j-i+1 <= 2) {
-        m[i][j].push(0);
         dp[i][j] = 0;
         return dp[i][j];
     }
@@ -101,23 +100,21 @@ ll f(int i, int j, int k,
             ll dpy = f(b+1,j,k,g,prefix,intervalAdd,dp,m);
             ll candidate = p1+p2+dpx+dpy;
             // printf("calculate dp[%d][%d], p1 %lld p2 %lld dpx[%d][%d] %lld dpy[%d][%d] %lld\n", i, j, p1, p2, i,a-1,dpx, b+1,j,dpy);
-            if ((int)m[i][j].size() < k) m[i][j].push(candidate);
-            else {
-                ll t = m[i][j].top();
-                if (t < candidate) {
-                    m[i][j].pop();
-                    m[i][j].push(candidate);
-                }
-            }
+            // if (j-i+1 == (int)g.size()) {
+            //     if (s.find(dpy.second) == s.end()) {
+            //         s.insert(dpy.second);
+            //         if ((int)q.size() < k) q.push(candidate);
+            //         else {
+            //             ll v = q.top();
+            //             if (v < candidate) {
+            //                 q.pop();
+            //                 q.push(candidate);
+            //             }
+            //         }
+            //     }
+            // }
+            
             dp[i][j] = max(dp[i][j], candidate);
-        }
-    }
-    if ((int)m[i][j].size() < k) m[i][j].push(0);
-    else {
-        ll t = m[i][j].top();
-        if (t < 0) {
-            m[i][j].pop();
-            m[i][j].push(0);
         }
     }
     dp[i][j] = max(dp[i][j], 0ll);
@@ -125,7 +122,7 @@ ll f(int i, int j, int k,
 }
 void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
     vector<vector<ll>> dp(n+1, vector<ll>(n+1, -1e12));
-    vector<vector<priority_queue<ll, vector<ll>, greater<ll>>>> pqs(n+1, vector<priority_queue<ll, vector<ll>, greater<ll>>>(n+1, priority_queue<ll, vector<ll>, greater<ll>>{}));
+    vector<vector<Y>> pqs(n+1, vector<Y>(n+1, Y{}));
     vector<vector<ll>> intervalAdd = getInterval(n, g, interval);
     vector<ll> prefix = getPrefix(n, g);
     // if (n < 19) {
@@ -142,7 +139,6 @@ void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
 
     // ll rs = max(0ll, prefix[n]+intervalAdd[1][n]);
     vector<ll> rs = {prefix[n]+intervalAdd[1][n]};
-    vector<Y> c = {};
     for (int a = 0; a < n; a++) {
         for (int b = 0; b < n-a; b++) {
             ll p1 = 0;
@@ -169,21 +165,14 @@ void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
             ll p = p1+p2+p3+p4;
             if (a-1 >= 0 && b > 0) {
                 f(a+1,n-b,k,g,prefix,intervalAdd,dp,pqs);
-                c.push_back(Y{a+1, n-b, p});
             } else if (a-1 < 0 && b > 0) {
                 f(1,n-b,k,g,prefix,intervalAdd,dp,pqs);
-                c.push_back(Y{1, n-b, p});
             } else if (a-1 >= 0 && b == 0) {
                 f(a+1,n,k,g,prefix,intervalAdd,dp,pqs);
-                c.push_back(Y{a+1, n, p});
             } else {
                 f(1,n,k,g,prefix,intervalAdd,dp,pqs);
-                c.push_back(Y{1, n, p});
             }
         }
-    }
-    for (Y y: c) {
-        collectResult(rs, pqs[y.i][y.j], y.p);
     }
     sort(rs.begin(), rs.end(), [](ll& i, ll& j){
         return i >= j;
