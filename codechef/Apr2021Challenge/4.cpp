@@ -99,7 +99,7 @@ vector<pair<ll,ll>> getTopKsFromA(vector<pair<ll,ll>>& a, vector<pair<ll,ll>>& b
         for (int j = 0; j < m; j++) {
             if ((int)rs.size() == k) return rs;
             if (i+1 < n && a[i].first+b[j].first < a[i+1].first+b[0].first) break;
-            rs.push_back({a[i].first+b[j].first+add, a[i].second|b[i].second});
+            rs.push_back({a[i].first+b[j].first+add, a[i].second|b[j].second});
         }
     }
     return rs;
@@ -158,7 +158,9 @@ ll f(int i, int j, int k,
                         y.q.push({v,bits});
                     } else {
                         ll vq = y.q.top().first;
+                        ll qbits = y.q.top().second;
                         if (vq >= v) break;
+                        y.s.erase(qbits);
                         y.q.pop();
                         y.s.insert(bits);
                         y.q.push({v,bits});
@@ -168,17 +170,22 @@ ll f(int i, int j, int k,
             dp[i][j] = max(dp[i][j], candidate);
         }
     }
-    if ((int)y.q.size() < k) {
-        y.s.insert(0);
-        y.q.push({0,0});
-    } else {
-        ll vq = y.q.top().first;
-        if (vq < 0) {
-            y.q.pop();
+    if (y.s.find(0) == y.s.end()) {
+        if ((int)y.q.size() < k) {
             y.s.insert(0);
             y.q.push({0,0});
-        };
+        } else {
+            ll vq = y.q.top().first;
+            ll qbits = y.q.top().second;
+            if (vq < 0) {
+                y.q.pop();
+                y.s.erase(qbits);
+                y.s.insert(0);
+                y.q.push({0,0});
+            };
+        }
     }
+    
     y.getAllItems();
     m[i][j] = y;
     dp[i][j] = max(dp[i][j], 0ll);
@@ -204,6 +211,7 @@ void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
     // ll rs = max(0ll, prefix[n]+intervalAdd[1][n]);
     vector<C> c = {};
     vector<ll> rs = {prefix[n]+intervalAdd[1][n]};
+    // vector<ll> rs = {};
     for (int a = 0; a < n; a++) {
         for (int b = 0; b < n-a; b++) {
             ll p1 = 0;

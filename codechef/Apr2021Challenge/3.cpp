@@ -129,8 +129,8 @@ ll f(int indA, int indB, int i, int j, int n,
     // printf("indA %d indB %d i %d j %d dp %lld\n", indA, indB, i, j, dp[indA][indB][i][j]);
     return dp[indA][indB][i][j];
 }
-vector<ll> bf(int n, int m, int k, vector<ll>& g, vector<ll>& prefix, vector<I>& interval) {
-    vector<ll> rs = {};
+vector<pair<ll,ll>> bf(int n, int m, int k, vector<ll>& g, vector<ll>& prefix, vector<I>& interval) {
+    vector<pair<ll,ll>> rs = {};
     for (int i = 0; i < (1 << n); i++) {
         ll t = 0;
         vector<int> x(n+1, 0);
@@ -150,10 +150,10 @@ vector<ll> bf(int n, int m, int k, vector<ll>& g, vector<ll>& prefix, vector<I>&
             }
             if (f) t += it.d;
         }
-        rs.push_back(t);
+        rs.push_back({t, i});
     }
-    sort(rs.begin(), rs.end(), [](ll& a, ll& b) {
-        return a >= b;
+    sort(rs.begin(), rs.end(), [](pair<ll,ll>& a, pair<ll,ll>& b) {
+        return a.first >= b.first;
     });
     return rs;
 }
@@ -162,9 +162,10 @@ void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
     vector<vector<ll>> intervalAdd = getInterval(n, g, interval);
     vector<ll> prefix = getPrefix(n, g);
     if (n < 19) {
-        vector<ll> rs = bf(n,m,k,g,prefix,interval);
+        vector<pair<ll,ll>> rs = bf(n,m,k,g,prefix,interval);
         for (int i = 0; i < k; i++) {
-            printf("%lld ", rs[i]);
+            // printf("%lld (i %lld) ", rs[i].first, rs[i].second);
+            printf("%lld ", rs[i].first);
         }
         printf("\n");
         return;
