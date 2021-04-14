@@ -10,7 +10,7 @@
 #include <set>
 #include <utility>
 
-// g++ -std=c++14 -O2 -o s.out 3.cpp && ./s.out < x.txt
+// g++ -std=c++14 -O2 -o s.out 4.cpp && ./s.out < x.txt
 using namespace std;
 using ll = long long;
 struct I {
@@ -28,11 +28,11 @@ struct Y {
     priority_queue<pair<ll, ll>, vector<pair<ll,ll>>, greater<pair<ll, ll>>> q;
     vector<pair<ll,ll>> items;
 
-    void getAllItems() {
+    void getAllItems(ll addedBits) {
         while (!q.empty()) {
             auto x = q.top();
             q.pop();
-            items.push_back(x);
+            items.push_back({x.first, addedBits|x.second});
         }
         reverse(items.begin(), items.end());
     }
@@ -114,12 +114,12 @@ vector<pair<ll,ll>> getTopKs(vector<pair<ll,ll>>& a, vector<pair<ll,ll>>& b, ll 
 }
 ll setBits(ll x, int from, int to) {
     ll y = x;
-    for (int i = from; i <= to; i++) {
-        y |= 1ll << i;
+    for (int i = from; i >= to; i--) {
+        y |= 1ll << (60-i);
     }
     return y;
 }
-ll f(int i, int j, int k,
+ll f(int i, int j, int k, ll addedBits,
      vector<ll>& g, vector<ll>& prefix,
      vector<vector<ll>>& intervalAdd,
      vector<vector<ll>>& dp,
@@ -132,7 +132,7 @@ ll f(int i, int j, int k,
         Y y{};
         y.s.insert(0);
         y.q.push({0, 0});
-        y.getAllItems();
+        y.getAllItems(addedBits);
         m[i][j] = y;
         dp[i][j] = 0;
         return dp[i][j];
@@ -143,15 +143,15 @@ ll f(int i, int j, int k,
         for (int b = a; b < j; b++) {
             ll p1 = prefix[b]-prefix[a-1];
             ll p2 = intervalAdd[a][b];
-            ll dpx = f(i,a-1,k,g,prefix,intervalAdd,dp,m);
-            ll dpy = f(b+1,j,k,g,prefix,intervalAdd,dp,m);
+            ll dpx = f(i,a-1,k,addedBits,g,prefix,intervalAdd,dp,m);
+            ll dpy = f(b+1,j,k,addedBits,g,prefix,intervalAdd,dp,m);
             ll candidate = p1+p2+dpx+dpy;
             // printf("calculate dp[%d][%d], p1 %lld p2 %lld dpx[%d][%d] %lld dpy[%d][%d] %lld\n", i, j, p1, p2, i,a-1,dpx, b+1,j,dpy);
             vector<pair<ll,ll>> topKs = getTopKs(m[i][a-1].items, m[b+1][j].items, p1+p2, k);
             for (pair<ll,ll>& t: topKs) {
                 ll v = t.first;
                 ll bits = t.second;
-                bits = setBits(bits, a, b);
+                bits = setBits(bits, b, a);
                 if (y.s.find(bits) == y.s.end()) {
                     if ((int)y.q.size() < k) {
                         y.s.insert(bits);
@@ -186,7 +186,7 @@ ll f(int i, int j, int k,
         }
     }
     
-    y.getAllItems();
+    y.getAllItems(addedBits);
     m[i][j] = y;
     dp[i][j] = max(dp[i][j], 0ll);
     return dp[i][j];
@@ -214,15 +214,18 @@ void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
     // vector<ll> rs = {};
     for (int a = 0; a < n; a++) {
         for (int b = 0; b < n-a; b++) {
+        	ll bits = 0;
             ll p1 = 0;
             ll p2 = 0;
             if (a-1 >= 0) {
+            	setBits(bits, a, 1);
                 p1 = prefix[a];
                 p2 = intervalAdd[1][a]; 
             }
             ll p3 = 0;
             ll p4 = 0;
             if (b > 0) {
+            	setBits(bits, n, n-b+1);
                 p3 = prefix[n]-prefix[n-b];
                 p4 = intervalAdd[n-b+1][n];
             }
@@ -237,16 +240,16 @@ void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
             // }
             ll p = p1+p2+p3+p4;
             if (a-1 >= 0 && b > 0) {
-                f(a+1,n-b,k,g,prefix,intervalAdd,dp,pqs);
+                f(a+1,n-b,k,bits,g,prefix,intervalAdd,dp,pqs);
                 c.push_back(C{a+1, n-b, p});
             } else if (a-1 < 0 && b > 0) {
-                f(1,n-b,k,g,prefix,intervalAdd,dp,pqs);
+                f(1,n-b,k,bits,g,prefix,intervalAdd,dp,pqs);
                 c.push_back(C{1, n-b, p});
             } else if (a-1 >= 0 && b == 0) {
-                f(a+1,n,k,g,prefix,intervalAdd,dp,pqs);
+                f(a+1,n,k,bits,g,prefix,intervalAdd,dp,pqs);
                 c.push_back(C{a+1, n, p});
             } else {
-                f(1,n,k,g,prefix,intervalAdd,dp,pqs);
+                f(1,n,k,bits,g,prefix,intervalAdd,dp,pqs);
                 c.push_back(C{1, n, p});
             }
         }
