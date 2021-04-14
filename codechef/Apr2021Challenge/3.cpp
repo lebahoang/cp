@@ -164,8 +164,8 @@ void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
     if (n < 19) {
         vector<pair<ll,ll>> rs = bf(n,m,k,g,prefix,interval);
         for (int i = 0; i < k; i++) {
-            // printf("%lld (i %lld) ", rs[i].first, rs[i].second);
-            printf("%lld ", rs[i].first);
+            printf("%lld (i %lld) ", rs[i].first, rs[i].second);
+            // printf("%lld ", rs[i].first);
         }
         printf("\n");
         return;
