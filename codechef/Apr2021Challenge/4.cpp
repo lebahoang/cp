@@ -21,6 +21,7 @@ struct I {
 struct C {
     int i;
     int j;
+    ll bits;
     ll p;
 };
 struct Y {
@@ -58,9 +59,10 @@ vector<ll> getPrefix(int n, vector<ll>& g) {
     }
     return prefix;
 }
-void collectResult(vector<pair<ll, ll>>& rs, Y y, ll add) {
+void collectResult(vector<pair<ll, ll>>& rs, Y y, ll bits, ll add) {
     for (auto x: y.items) {
-        rs.push_back({x.first+add,x.second});
+        // printf("added bits %lld, bits %lld\n", bits, bits|x.second);
+        rs.push_back({x.first+add, bits|x.second});
     }
 }
 vector<ll> bf(int n, int m, int k, vector<ll>& g, vector<ll>& prefix, vector<I>& interval) {
@@ -105,12 +107,28 @@ vector<pair<ll,ll>> getTopKsFromA(vector<pair<ll,ll>>& a, vector<pair<ll,ll>>& b
     return rs;
 }
 vector<pair<ll,ll>> getTopKs(vector<pair<ll,ll>>& a, vector<pair<ll,ll>>& b, ll add, int k) {
-    vector<pair<ll,ll>> rs1 = getTopKsFromA(a,b,add,k);
-    vector<pair<ll,ll>> rs2 = getTopKsFromA(b,a,add,k);
-    for (int i = 0; i < (int)rs1.size(); i++) {
-        if (rs1[i].first > rs2[i].first) return rs1;
+    // vector<pair<ll,ll>> rs1 = getTopKsFromA(a,b,add,k);
+    // vector<pair<ll,ll>> rs2 = getTopKsFromA(b,a,add,k);
+    // for (int i = 0; i < (int)rs1.size(); i++) {
+    //     if (rs1[i].first > rs2[i].first) return rs1;
+    // }
+    // return rs2;
+
+    int n = a.size();
+    int m = b.size();
+    vector<pair<ll,ll>> tt = {};
+    vector<pair<ll,ll>> rs = {};
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            tt.push_back({a[i].first+b[j].first+add, a[i].second|b[j].second});
+        }
     }
-    return rs2;
+    sort(tt.begin(),tt.end(), [](pair<ll,ll>& x, pair<ll, ll>& y){
+        return x.first >= y.first;
+    });
+    // for (int i = 0; i < min(k, (int)tt.size()); i++) rs.push_back(tt[i]);
+    // return rs;
+    return tt;
 }
 ll setBits(ll x, int from, int to) {
     ll y = x;
@@ -130,8 +148,8 @@ ll f(int i, int j, int k, ll addedBits,
     }
     if (j-i+1 <= 2) {
         Y y{};
-        y.s.insert(addedBits|0);
-        y.q.push({0, addedBits|0});
+        y.s.insert(0);
+        y.q.push({0,0});
         y.getAllItems();
         m[i][j] = y;
         dp[i][j] = 0;
@@ -148,11 +166,27 @@ ll f(int i, int j, int k, ll addedBits,
             ll candidate = p1+p2+dpx+dpy;
             // printf("calculate dp[%d][%d], p1 %lld p2 %lld dpx[%d][%d] %lld dpy[%d][%d] %lld\n", i, j, p1, p2, i,a-1,dpx, b+1,j,dpy);
             vector<pair<ll,ll>> topKs = getTopKs(m[i][a-1].items, m[b+1][j].items, p1+p2, k);
+            // if (i == 1 && j == (int)g.size()-1 && a == 9 && b == 9) {
+            //     for (auto e: m[i][a-1].items) {
+            //         printf("i %d a-1 %d %lld %lld\n", i, a-1, e.first, e.second);
+            //     }
+
+            //     for (auto e: m[b+1][j].items) {
+            //         printf("b+1 %d j %d %lld %lld\n", b+1, j, e.first, e.second);
+            //     }
+
+            //     printf("----------- %d\n", k);
+            //     for (auto t: topKs) {
+            //         printf("%lld %lld\n", t.first-p1-p2, t.second);
+            //     }
+            // }
             for (pair<ll,ll>& t: topKs) {
                 ll v = t.first;
                 ll bits = t.second;
                 bits = setBits(bits, a, b);
-                bits = addedBits|bits;
+                // if (i == 1 && j == (int)g.size()-1 && a == 9 && b == 9) {
+                //     printf("dp bits %lld t.second %lld\n", bits, t.second);
+                // }
                 if (y.s.find(bits) == y.s.end()) {
                     if ((int)y.q.size() < k) {
                         y.s.insert(bits);
@@ -160,7 +194,7 @@ ll f(int i, int j, int k, ll addedBits,
                     } else {
                         ll vq = y.q.top().first;
                         ll qbits = y.q.top().second;
-                        if (vq >= v) break;
+                        if (vq > v) break;
                         y.s.erase(qbits);
                         y.q.pop();
                         y.s.insert(bits);
@@ -171,18 +205,19 @@ ll f(int i, int j, int k, ll addedBits,
             dp[i][j] = max(dp[i][j], candidate);
         }
     }
-    if (y.s.find(addedBits|0) == y.s.end()) {
+    if (y.s.find(0) == y.s.end()) {
+        // printf("AAAAAAAA i %d j %d\n", i, j);
         if ((int)y.q.size() < k) {
-            y.s.insert(addedBits|0);
-            y.q.push({0,addedBits|0});
+            y.s.insert(0);
+            y.q.push({0,0});
         } else {
             ll vq = y.q.top().first;
             ll qbits = y.q.top().second;
             if (vq < 0) {
                 y.q.pop();
                 y.s.erase(qbits);
-                y.s.insert(addedBits|0);
-                y.q.push({0,addedBits|0});
+                y.s.insert(0);
+                y.q.push({0,0});
             };
         }
     }
@@ -210,26 +245,29 @@ void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
     // }
 
     // ll rs = max(0ll, prefix[n]+intervalAdd[1][n]);
+    // k += 100;
     vector<C> c = {};
     vector<pair<ll, ll>> rs = {{prefix[n]+intervalAdd[1][n], (1ll << n)-1}};
     // vector<ll> rs = {};
     for (int a = 0; a < n; a++) {
         for (int b = 0; b < n-a; b++) {
-        	ll bits = 0;
+            
+            ll bits = 0;
             ll p1 = 0;
             ll p2 = 0;
             if (a-1 >= 0) {
-            	setBits(bits, 1, a);
+                bits = setBits(bits, 1, a);
                 p1 = prefix[a];
                 p2 = intervalAdd[1][a]; 
             }
             ll p3 = 0;
             ll p4 = 0;
             if (b > 0) {
-            	setBits(bits, n-b+1, n);
+                bits = setBits(bits, n-b+1, n);
                 p3 = prefix[n]-prefix[n-b];
                 p4 = intervalAdd[n-b+1][n];
             }
+            // printf("len a %d, len b %d, bits %lld, n-b+1 %d, n %d\n", a, b, bits, n-b+1, n);
             // if (a-1 >= 0 && b > 0) {
             //     rs = max(rs, p1+p2+p3+p4+f(a+1,n-b,k,g,prefix,intervalAdd,dp,pqs));
             // } else if (a-1 < 0 && b > 0) {
@@ -242,21 +280,21 @@ void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
             ll p = p1+p2+p3+p4;
             if (a-1 >= 0 && b > 0) {
                 f(a+1,n-b,k,bits,g,prefix,intervalAdd,dp,pqs);
-                c.push_back(C{a+1, n-b, p});
+                c.push_back(C{a+1, n-b, bits, p});
             } else if (a-1 < 0 && b > 0) {
                 f(1,n-b,k,bits,g,prefix,intervalAdd,dp,pqs);
-                c.push_back(C{1, n-b, p});
+                c.push_back(C{1, n-b, bits, p});
             } else if (a-1 >= 0 && b == 0) {
                 f(a+1,n,k,bits,g,prefix,intervalAdd,dp,pqs);
-                c.push_back(C{a+1, n, p});
+                c.push_back(C{a+1, n, bits, p});
             } else {
                 f(1,n,k,bits,g,prefix,intervalAdd,dp,pqs);
-                c.push_back(C{1, n, p});
+                c.push_back(C{1, n, bits, p});
             }
         }
     }
     for (C y: c) {
-        collectResult(rs, pqs[y.i][y.j], y.p);
+        collectResult(rs, pqs[y.i][y.j], y.bits, y.p);
     }
     sort(rs.begin(), rs.end(), [](pair<ll,ll>& i, pair<ll,ll>& j){
         return i.first >= j.first;
@@ -268,7 +306,8 @@ void solve(int n, int m, int k, vector<ll>& g, vector<I>& interval) {
     //     }
     // }
     for (int i = 0; i < k; i++) {
-        printf("%lld (%lld) ", rs[i].first, rs[i].second);
+        // printf("%lld (%lld) ", rs[i].first, rs[i].second);
+        printf("%lld ", rs[i].first);
     }
     printf("\n");
 }
