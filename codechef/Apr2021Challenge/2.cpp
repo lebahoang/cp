@@ -7,6 +7,7 @@
 #include <stack>
 #include <queue>
 #include <vector>
+#include <bitset>
 #include <utility>
 
 // g++ -std=c++14 -O2 -o s.out 2.cpp && ./s.out < x.txt
