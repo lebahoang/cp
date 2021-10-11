@@ -23,11 +23,12 @@ int solve(int n, vector<int>& in_v, vector<vector<int>>& out_v) {
     for (int i = 1; i <= n; i++) {
         if (in_v[i] == 0) {
             round_v[i] = 1;
-            ss.push_back(i);
+            // ss.push_back(i);
+            s.push({i, round_v[i]});
         }
     }
-    sort(ss.begin(), ss.end());
-    for (int i: ss) s.push({i, round_v[i]});
+    // sort(ss.begin(), ss.end());
+    // for (int i: ss) s.push({i, round_v[i]});
     int rs = -1;
     while (!s.empty()) {
         pair<int, int> it = s.front();
@@ -73,18 +74,18 @@ int main() {
                 out_v[in].push_back(i);
             }
         }
-        for (int i = 1; i <= n; i++) {
-            vector<int> a = {};
-            vector<int> b = {};
-            for (int j: out_v[i]) {
-                if (j > i) a.push_back(j);
-                else b.push_back(j);
-            }
-            sort(a.begin(), a.end());
-            sort(b.begin(), b.end());
-            a.insert(a.end(), b.begin(), b.end());
-            out_v[i] = a;
-        }
+        // for (int i = 1; i <= n; i++) {
+        //     vector<int> a = {};
+        //     vector<int> b = {};
+        //     for (int j: out_v[i]) {
+        //         if (j > i) a.push_back(j);
+        //         else b.push_back(j);
+        //     }
+        //     sort(a.begin(), a.end());
+        //     sort(b.begin(), b.end());
+        //     a.insert(a.end(), b.begin(), b.end());
+        //     out_v[i] = a;
+        // }
         printf("%d\n", solve(n, in_v, out_v));
     }
     return 0;
