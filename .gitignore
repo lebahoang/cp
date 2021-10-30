@@ -1,4 +1,5 @@
 **/._*
 **/.DS_Store
 **/s.out
+**/s\.out\.dSYM
 .vscode
