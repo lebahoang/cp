@@ -9,7 +9,7 @@ func get(v int) int {
 	return max(0, v)
 }
 func min(a ...int) int {
-	var k int = 1e9;
+	var k int = 1e9
 	for _, x := range a {
 		if k > x {
 			k = x
@@ -19,7 +19,7 @@ func min(a ...int) int {
 }
 
 func max(a ...int) int {
-	var k int = -1e9;
+	var k int = -1e9
 	for _, x := range a {
 		if k < x {
 			k = x
@@ -42,7 +42,7 @@ func calculatePrefix(h []int, e int) []int {
 			prefix = append(prefix, -1)
 		}
 		p++
-		
+
 		if i == h[ind] {
 			ind++
 			c++
@@ -54,7 +54,7 @@ func calculatePrefix(h []int, e int) []int {
 func calculateSuffix(h []int, e int) []int {
 	suffix := make([]int, e+1)
 	s := e
-	ind := len(h)-1
+	ind := len(h) - 1
 	c := 0
 	for i := e; i >= 1; i-- {
 		if i == h[len(h)-1] {
@@ -78,24 +78,25 @@ func calculateSuffix(h []int, e int) []int {
 
 func search(h []int, n int, v int) int {
 	l := 0
-	r := n-1
+	r := n - 1
 	for {
 		if l > r {
 			break
 		}
-		mid := (l+r)/2
+		mid := (l + r) / 2
 		// fmt.Println(mid)
 		if h[mid] <= v {
 			if mid+1 == n || h[mid+1] > v {
 				return mid
-			} 
-			l = mid+1
+			}
+			l = mid + 1
 		} else {
-			r = mid-1
+			r = mid - 1
 		}
 	}
 	return -1
 }
+
 // func solve(h []int, k int) int {
 // 	var rs int = 1e9
 // 	n := len(h)
@@ -203,7 +204,7 @@ func solve(h []int, k int) int {
 				for g := 0; g < i; g++ {
 					m := h[i]
 					jOne := ind[g][j-1]
-					mid := search(h, n, (m + jOne)/2)
+					mid := search(h, n, (m+jOne)/2)
 					if mid > -1 {
 						a := h[mid]
 						y := dp[g][j-1] - get(suffix[jOne]) +
@@ -234,7 +235,7 @@ func main() {
 	// k := 2
 	// houses := []int{7,4,6,1}
 	// k := 1
-	houses := []int{6459,6288,5120,83,4547,1743,4240,8018,1691,6439,2031,3694,470,8133,7982,2972,7370,560,3863,6237,7589,4170,3662,1185,9474,5681,5400,6862,8008,5957,440,1617,5298,3158,6616,6336,9071,1787,446,6555,5116,9305,9552,1414,8964,6363,840,2973,9728,518,9501,2014,2913,433,8100,5971,8487,6764,8101,7955,9967,9425}
+	houses := []int{6459, 6288, 5120, 83, 4547, 1743, 4240, 8018, 1691, 6439, 2031, 3694, 470, 8133, 7982, 2972, 7370, 560, 3863, 6237, 7589, 4170, 3662, 1185, 9474, 5681, 5400, 6862, 8008, 5957, 440, 1617, 5298, 3158, 6616, 6336, 9071, 1787, 446, 6555, 5116, 9305, 9552, 1414, 8964, 6363, 840, 2973, 9728, 518, 9501, 2014, 2913, 433, 8100, 5971, 8487, 6764, 8101, 7955, 9967, 9425}
 	k := 53
 
 	fmt.Println(solve(houses, k))
