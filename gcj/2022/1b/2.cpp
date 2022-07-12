@@ -152,16 +152,28 @@ int main() {
                 cin >> u[i][j];
             }
             sort(u[i].begin(), u[i].end());
+            // for (int j = 0; j < p; j++) {
+            //     if (j == 0) prefix[i][j] = 0;
+            //     else prefix[i][j] = prefix[i][j-1] + u[i][j] - u[i][j-1];
+            // }
+            // for (int j = p-1; j >= 0; j--) {
+            //     if (j == p-1) suffix[i][j] = 0;
+            //     else suffix[i][j] = suffix[i][j+1] + u[i][j+1] - u[i][j];
+            // }
             for (int j = 0; j < p; j++) {
-                if (j == 0) prefix[i][j] = 0;
-                else prefix[i][j] = prefix[i][j-1] + u[i][j] - u[i][j-1];
-            }
-            for (int j = p-1; j >= 0; j--) {
-                if (j == p-1) suffix[i][j] = 0;
-                else suffix[i][j] = suffix[i][j+1] + u[i][j+1] - u[i][j];
+                if (j == 0) {
+                    prefix[i][j] = 0;
+                    suffix[i][p-1-j] = 0;
+                } else {
+                    prefix[i][j] = prefix[i][j-1] + u[i][j] - u[i][j-1];
+                    suffix[i][p-1-j] = suffix[i][p-1-j+1] + u[i][p-1-j+1] - u[i][p-1-j];
+                }
             }
         }
-        vector<vector<ll>> dp(n, vector<ll>(p, 1e16));
+        ll rs = 1e16;
+        // vector<vector<ll>> dp(n, vector<ll>(p, 1e16));
+        vector<ll> dp0(p, 1e16);
+        vector<ll> dp1(p, 1e16);
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < p; j++) {
                 for (int k = 0; k < p; k++) {
@@ -169,7 +181,8 @@ int main() {
                     ll prevDP = 0;
                     if (i >= 1) {
                         valK = u[i-1][k];
-                        prevDP = dp[i-1][k];
+                        // prevDP = dp[i-1][k];
+                        prevDP = dp0[k];
                     }
                     int ind = find(valK, u[i]);
                     // printf("I %d J %d, K %d, valK %d, ind %d\n", i, j, k, valK, ind);
@@ -185,14 +198,22 @@ int main() {
                     ll costGoLeftFromRight = goLeftFromRight(u[i], ind, j, valK, prefix[i], suffix[i]);
                     ll cost2 = costGoRight + costGoFromEnd + costGoLeftFromRight;
                     // printf("costGoRight %lld, costGoFromEnd %lld, costGoLeftFromRight %lld, Cost2 %lld\n", costGoRight, costGoFromEnd, costGoLeftFromRight, cost2);
-                    dp[i][j] = min(dp[i][j], prevDP + min(cost1, cost2));
+                    // dp[i][j] = min(dp[i][j], prevDP + min(cost1, cost2));
+                    dp1[j] = min(dp1[j], prevDP + min(cost1, cost2));
+                }
+                if (i == n-1) {
+                    // rs = min(rs, dp[i][j]);
+                    rs = min(rs, dp1[j]);
                 }
             }
+            // for (int j = 0; j < p; j++) {
+            //     dp0[j] = dp1[j];
+            //     dp1[j] = 1e16;
+            // }
+            dp0 = vector<ll>(dp1.begin(), dp1.end());
+            fill(dp1.begin(), dp1.end(), 1e16);
         }
-        ll rs = 1e16;
-        for (int j = 0; j < p; j++) {
-            rs = min(rs, dp[n-1][j]);
-        }
+        
         printf("Case #%d: %lld\n", cs, rs);
     }
     return 0;
