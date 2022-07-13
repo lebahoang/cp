@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type P struct {
 	prime int
@@ -94,25 +92,26 @@ func idealArrays(n int, maxValue int) int {
 	}
 	for i := 1; i < n; i++ {
 		for j := 1; j <= maxValue; j++ {
-			dpn[j] = 0
 			l := int64(len(primesOfNumber[j]))
-			if l > 1 {
-				for _, p := range primesOfNumber[j] {
-					dpn[j] = (dpn[j]%mod + dpn[p.s]%mod) % mod
+			dpn[j] = 0
+			m := 1
+			dpn[j] = (dpn[j]%mod + dp[j]%mod) % mod
+			for _, p := range primesOfNumber[j] {
+				m = m * (p.s / p.prime)
+				dpn[j] = (dpn[j]%mod + dpn[j/p.prime]%mod) % mod
+				if l >= 2 {
+					dpn[j] = (dpn[j]%mod - ((l-2)*dp[p.s])%mod) % mod
 				}
-				dpn[j] = (dpn[j]%mod + dp[j]%mod) % mod
-				dpn[j] = (dpn[j]%mod - (l-1)%mod) % mod
-			} else if l == 1 {
-				p := primesOfNumber[j][0]
-				dpn[j] = (dpn[j]%mod + dpn[p.s/p.prime]%mod) % mod
-			} else {
-				dpn[j] = 1
+			}
+
+			if l >= 1 {
+				dpn[j] = (dpn[j]%mod - ((l-1)*dpn[m])%mod) % mod
 			}
 			dp[j] = dpn[j]
 		}
 	}
-	fmt.Println(dp)
-	fmt.Println(dpn)
+	// fmt.Println(dp)
+	// fmt.Println(dpn)
 	var rs int64 = 0
 	for j := 1; j <= maxValue; j++ {
 		rs = (rs%mod + dp[j]%mod) % mod
@@ -121,7 +120,9 @@ func idealArrays(n int, maxValue int) int {
 }
 
 func main() {
-	fmt.Println(idealArrays(2, 5))
+	// fmt.Println(idealArrays(2, 5))
 	// fmt.Println(idealArrays(5, 3))
-	// fmt.Println(idealArrays(1000, 1000))
+	// fmt.Println(idealArrays(2, 6))
+	fmt.Println(idealArrays(20, 100)) // 2378615
+
 }
