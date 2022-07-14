@@ -99,8 +99,12 @@ func idealArrays(n int, maxValue int) int {
 			for _, p := range primesOfNumber[j] {
 				m = m * (p.s / p.prime)
 				dpn[j] = (dpn[j]%mod + dpn[j/p.prime]%mod) % mod
-				if l >= 2 {
-					dpn[j] = (dpn[j]%mod - ((l-2)*dp[p.s])%mod) % mod
+			}
+
+			for i := int64(1); i <= l; i++ {
+				if l-1-i >= 0 {
+					// C(i, len(primesOfNumber))
+					//
 				}
 			}
 

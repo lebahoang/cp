@@ -1,4 +1,5 @@
 import math
+import re
 from traceback import print_tb
 
 def dist(a, b):
@@ -9,7 +10,7 @@ class Person:
         self.id = int(id)
         self.home = home
         self.blood_sample = blood_sample[1:]
-        self.pattern = 'picoico'
+        self.pattern = ['pic', 'opi', 'cop', 'ico']
         self.visited = []
     def get_strings(self, s):
         rs = []
@@ -22,38 +23,108 @@ class Person:
                 a += s[i]
         if a != '': rs.append(a)
         return rs
-    def _dfs(self, n, m, i, j, visited, s):
-        if len(s) == 7:
-            return True
+    def _dfs(self, pattern, n, m, i, j, visited, s, cur_pattern, rs):
+        if len(s) == 3:
+            rs.append(cur_pattern[:])
+            return
         visited[i][j] = True
         coords = [(0,-1), (0,1), (-1,0), (1,0)]
         for c in coords:
             ii = i+c[0]
             jj = j+c[1]
             if ii >= 0 and jj >= 0 and ii < n and jj < m and not visited[ii][jj]:
-                if self.blood_sample[ii][jj] == self.pattern[len(s)]:
-                    t = self._dfs(n, m, ii, jj, visited, s+self.blood_sample[ii][jj])
-                    if t:
-                        return t
+                if self.blood_sample[ii][jj] == pattern[len(s)]:
+                    cur_pattern.append((ii, jj))
+                    self._dfs(pattern, n, m, ii, jj, visited, s+self.blood_sample[ii][jj], cur_pattern, rs)
+                    cur_pattern.pop(-1)
         visited[i][j] = False
-        return False
-    def is_pico_bot(self):
+    def _detect_a_pico_bot_pattern(self, pattern, rs):
         n = len(self.blood_sample)
         m = len(self.blood_sample[0])
         for i in range(n):
             for j in range(m):
-                if self.blood_sample[i][j] == 'p':
+                if self.blood_sample[i][j] == pattern[0]:
                     visited = [[False for j in range(m)] for i in range(n)]
-                    if self._dfs(n, m, i, j, visited, 'p'):
+                    if self._dfs(pattern, n, m, i, j, visited, pattern[0], [(i,j)], rs):
                         return True
         return False
-    
+    def check_one_seq(self, seqs):
+        d = {}
+        for s in seqs:
+            for p in s:
+                if p not in d:
+                    d[p] = 1
+                else:
+                    return False
+        return True
+    def check(self, seqs, cur_seq):
+        if len(cur_seq) == 4:
+            if self.check_one_seq(cur_seq):
+                return True
+            return False
+        
+        for s in seqs[len(cur_seq)]:
+            cur_seq.append(s)
+            if self.check(seqs, cur_seq):
+                return True
+            cur_seq.pop(-1)
+        return False
+    def is_pico_bot(self):
+        n = len(self.blood_sample)
+        m = len(self.blood_sample[0])
+            
+        rs = [[] for _ in range(len(self.pattern))]
+        for i, p in enumerate(self.pattern):
+            self._detect_a_pico_bot_pattern(p, rs[i])
+        
+        for p in rs:
+            if len(p) == 0:
+                return False
+        if self.check(rs, []):
+            return True
+
+        return False
+    def _get_time_minutes(self, x):
+        arr = x.split(':')
+        return int(arr[0]) * 60 + int(arr[1])
+    def _find_moment(self, start, end):
+        print(self.visited)
+        l = len(self.visited)//2
+        if self._get_time_minutes(self.visited[0][0]) >= end:
+            return '11:00', ''
+        elif self._get_time_minutes(self.visited[2*(l-1)][0]) <= start:
+            return '11:00', ''
+        for i in range(l):
+            x = 2*i+1
+            y = 2*(i+1)
+            print(i, x,y)
+            xt = self._get_time_minutes(self.visited[x][0])
+            yt = self._get_time_minutes(self.visited[y][0])
+            if xt <= end and yt > end:
+                return self.visited[x][0], self.visited[x][1]
+        return '', ''
+    def is_not_alibi(self, travel_time_dict):
+        start = self._get_time_minutes('11:00')
+        end = self._get_time_minutes('13:00')
+        t, location = self._find_moment(start, end)
+        needed_time = self._get_time_minutes(t) + travel_time_dict.get(location, 0) + 20
+        if needed_time >= start and needed_time <= end:
+            return True
+        return False
+
 
 def load_dbs():
     db = open('./population.txt')
     securitydb = open('./security_log.txt')
+    travel_time_db = open('./travel_times.txt')
     ps = []
     dps = {}
+    travel_time = {}
+    for line in travel_time_db.readlines():
+        line = line.strip()
+        if line == '': continue
+        arr = line.split(':')
+        travel_time[arr[0].strip()] = int(arr[1].strip())
     t = []
     bs_arr = []
     f = False
@@ -110,12 +181,18 @@ def load_dbs():
                 for person_name in person_names:
                     person_name = person_name.strip()
                     dps[person_name].visited.append([time_visit, place_name, in_or_out])
-    return ps, dps
+    return ps, dps, travel_time
 
-ps, dps = load_dbs()
+ps, dps, travel_time = load_dbs()
 s = 0
+cnt1 = 0
 for p in ps:
-    
-print(s)
+    # if p.is_pico_bot():
+    #     s += p.id
+    #     cnt1 += 1
+    if p.is_not_alibi(travel_time):
+        s += p.id
+        cnt1 += 1
+print(s, cnt1, travel_time)
 
 
