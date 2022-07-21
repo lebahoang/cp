@@ -2,6 +2,8 @@ import math
 import re
 from traceback import print_tb
 
+from numpy import sort
+
 def dist(a, b):
     return (a[0]-b[0])**2 + (a[1]-b[1])**2
 class Person:
@@ -104,13 +106,10 @@ class Person:
                 return self.visited[x][0], self.visited[x][1]
         return '', ''
     def is_not_alibi(self, travel_time_dict):
+        self.visited = sorted(self.visited)
         start = self._get_time_minutes('11:00')
         end = self._get_time_minutes('13:00')
-        t, location = self._find_moment(start, end)
-        needed_time = self._get_time_minutes(t) + travel_time_dict.get(location, 0) + 20
-        if needed_time >= start and needed_time <= end:
-            return True
-        return False
+        
 
 
 def load_dbs():

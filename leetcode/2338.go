@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math/big"
+)
 
 type P struct {
 	prime int
@@ -76,49 +79,80 @@ func primeFactors(n int) (pfs []P) {
 	}
 	return
 }
-
+func modInverse(b int64, m int64) *big.Int {
+	bBig := big.NewInt(b)
+	mBig := big.NewInt(m)
+	return bBig.Exp(bBig, big.NewInt(m-2), mBig)
+}
+func cnk(n int64, k int64, m int64, modInverses *[10005]int64) int64 {
+	// mBig := big.NewInt(m)
+	// rs := big.NewInt(1)
+	var rs int64 = 1
+	var i int64 = 1
+	for {
+		if i > k {
+			break
+		}
+		// rs.Mul(rs, big.NewInt(i+n-k))
+		// rs.Mod(rs, mBig)
+		// rs.Mul(rs, modInverse(i, m)) // (rs * (i + n - k)) / i
+		// rs.Mod(rs, mBig)
+		// rs.Mul(rs, big.NewInt(i+n-k))
+		// rs.Div(rs, big.NewInt(i)) // (rs * (i + n - k)) / i
+		x := (rs % m * (i + n - k) % m) % m
+		rs = (x % m * modInverses[i] % m) % m
+		i++
+	}
+	// rs.Mod(rs, mBig)
+	return rs
+}
 func idealArrays(n int, maxValue int) int {
 	var mod int64 = 1e9 + 7
-	primesOfNumber := [10003][]P{}
-	for j := 1; j <= maxValue; j++ {
-		primesOfNumber[j] = primeFactors(j)
+	var rs int64 = 0
+	modInverses := [10005]int64{}
+	for i := int64(1); i <= int64(n); i++ {
+		modInverses[i] = modInverse(i, mod).Int64()
 	}
-	// dp := [10003]int{}
-	// dpn := [10003]int{}
-	dp := make([]int64, maxValue+5)
-	dpn := make([]int64, maxValue+5)
+	// fmt.Println("HEHEH")
+	ndist := 15
+	// dp := make([][]int64, 16)
+	dp := [16][10005]int64{}
+	m := [10005][]int{}
+	k := 0
 	for j := 1; j <= maxValue; j++ {
-		dp[j] = 1
-	}
-	for i := 1; i < n; i++ {
-		for j := 1; j <= maxValue; j++ {
-			l := int64(len(primesOfNumber[j]))
-			dpn[j] = 0
-			m := 1
-			dpn[j] = (dpn[j]%mod + dp[j]%mod) % mod
-			for _, p := range primesOfNumber[j] {
-				m = m * (p.s / p.prime)
-				dpn[j] = (dpn[j]%mod + dpn[j/p.prime]%mod) % mod
+		dp[0][j] = 1
+		k = n - 1
+		combi := cnk(int64(1+k-1), int64(k), mod, &modInverses)
+		if k >= 0 {
+			t := ((combi % mod) * (dp[0][j] % mod)) % mod
+			rs = (rs%mod + t%mod) % mod
+		}
+		x := j + j
+		for {
+			if x > maxValue {
+				break
 			}
-
-			for i := int64(1); i <= l; i++ {
-				if l-1-i >= 0 {
-					// C(i, len(primesOfNumber))
-					//
-				}
-			}
-
-			if l >= 1 {
-				dpn[j] = (dpn[j]%mod - ((l-1)*dpn[m])%mod) % mod
-			}
-			dp[j] = dpn[j]
+			m[x] = append(m[x], j)
+			x = x + j
 		}
 	}
-	// fmt.Println(dp)
-	// fmt.Println(dpn)
-	var rs int64 = 0
-	for j := 1; j <= maxValue; j++ {
-		rs = (rs%mod + dp[j]%mod) % mod
+
+	for i := 1; i < ndist; i++ {
+		k = n - (i + 1)
+		combi := cnk(int64(i+1+k-1), int64(k), mod, &modInverses)
+		for j := 1; j <= maxValue; j++ {
+			dp[i][j] = 0
+			for _, k := range m[j] {
+				if j%k == 0 {
+					dp[i][j] = (dp[i][j]%mod + dp[i-1][k]%mod) % mod
+				}
+			}
+			if k >= 0 {
+				t := ((combi % mod) * (dp[i][j] % mod)) % mod
+				rs = (rs%mod + t%mod) % mod
+			}
+		}
+		// fmt.Println(dp[i])
 	}
 	return int(rs)
 }
@@ -127,6 +161,5 @@ func main() {
 	// fmt.Println(idealArrays(2, 5))
 	// fmt.Println(idealArrays(5, 3))
 	// fmt.Println(idealArrays(2, 6))
-	fmt.Println(idealArrays(20, 100)) // 2378615
-
+	fmt.Println(idealArrays(9999, 10000)) // 2378615
 }
