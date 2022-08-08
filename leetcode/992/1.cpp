@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <queue>
+#include <cassert>
 // g++ -std=c++14 -Wshadow -Wall -o s.out -O2 -Wno-unused-result -g -fsanitize=address -fsanitize=undefined 1.cpp && ./s.out
 using namespace std;
 struct X {
