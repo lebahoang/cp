@@ -3,3 +3,4 @@
 **/s.out
 **/**/s\.out\.dSYM
 .vscode
+**/**/*.class
