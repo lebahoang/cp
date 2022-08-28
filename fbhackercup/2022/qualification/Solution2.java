@@ -1,7 +1,8 @@
 import java.io.PrintWriter;
 import java.util.*;
-// javac -cp ".;*" -d ./build Solution2.java  && java -Xmx512M -Xss64M -cp ./build Solution2
+// javac -cp ".;*" -d ./build Solution2.java  && java -Xmx512M -Xss64M -cp ./build Solution2 < x.txt
 public class Solution2 {
+    private static PrintWriter out = new PrintWriter(System.out);
     private static boolean isNotHaveTree(char[][] a, int r, int c) {
         int cnt = 0;
         for (int i = 0; i < r; i++) {
@@ -25,7 +26,7 @@ public class Solution2 {
                     ff = false;
                     break;
                 } else {
-                    // System.out.println("dsadsa " + (i+x) + " dsad " + (j+y));
+                    // out.println("dsadsa " + (i+x) + " dsad " + (j+y));
                     visited[i+x][j+y] = true;
                     a[i+x][j+y] = '^';
                 }
@@ -56,7 +57,6 @@ public class Solution2 {
     }
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        PrintWriter out = new PrintWriter(System.out);
         try {
             String pos = "Possible";
             String impos = "Impossible";
