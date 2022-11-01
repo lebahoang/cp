@@ -1,3 +1,4 @@
+from pickle import BINBYTES
 import random
 
 T = 100

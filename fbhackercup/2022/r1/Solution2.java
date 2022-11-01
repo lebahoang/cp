@@ -3,7 +3,7 @@ import java.util.*;
 // javac -cp ".;*" -d ./build Solution2.java  && java -Xmx512M -Xss64M -cp ./build Solution2 < x.txt
 public class Solution2 {
     private static long mod = 1000_000_007L;
-    private static PrintWriter out = new PrintWriter(System.out);
+    private static PrintWriter out = new PrintWriter(System.out, true);
     private static long bf(int[] x, int[] y, int n, int[] qx, int[] qy, int q) {
         long rs = 0;
         for (int i = 0; i < q; i++) {
