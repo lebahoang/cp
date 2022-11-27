@@ -51,28 +51,6 @@ class Solve {
 }
 public class Solution1595 {
     public static void main(String[] args) {
-        // int n = 12;
-        // int x = 0;
-        // int cnt = 0;
-        // for (int a = 0; a < n; a++) {
-        //     for (int i = 0; i < (1 << n); i++) {
-        //         for (int z = i; z > 0; z = (i & (z-1))) {
-        //             if((z&i) != z || (z|i) != i) {
-        //                 System.out.println("AAAAAA");
-        //             }
-        //             int total = 0;
-        //             for (int bit = 0; bit < n; bit++) {
-        //                 cnt++;
-        //                 if ((z & (1 << bit)) != 0) {
-        //                     total += 100;
-        //                 }
-        //             }
-        //             x = Math.max(x, total);
-        //         }
-        //     }
-        // }
-        
-        // System.out.println("dsadasd " + x + "   " + cnt);
         int[][] c = {
             {15,96},
             {36,2}
