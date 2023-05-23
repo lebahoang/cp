@@ -42,6 +42,7 @@ private:
     void buildTree() {
         vector<ll> t(getNumberOfNodes(), 0);
         tree = t;
+        printf("%d\n", (int)tree.size());
     };
     void _update(ll value, int ind, int start, int end, int l, int r){
         // update value of 1 node in tree
@@ -210,16 +211,16 @@ int main() {
     // printf("%lld\n", tree.query(2,3));
     // return 0;
 
-    int n = 128;
+    int n = 1000;
     SimpleSegmentTree trees[n];
-    for (int i = 0; i < 128; i++) {
-        SimpleSegmentTree tree(5e4+5, (getTwoNodeValueFunc)getAdd, (updateOneNodeValueFunc)updateAdd);
+    for (int i = 0; i < n; i++) {
+        SimpleSegmentTree tree(5e6+5, (getTwoNodeValueFunc)getAdd, (updateOneNodeValueFunc)updateAdd);
         trees[i] = tree;
     }
     printf("OK\n");
-    for (int i = 0; i < 128; i++) {
+    for (int i = 0; i < n; i++) {
         trees[i].update(5,3);
-        printf("%lld\n", trees[i].query(0,10));
+        printf("%lld\n", trees[i].query(3, 3+525600));
     }
     return 0;
 }
