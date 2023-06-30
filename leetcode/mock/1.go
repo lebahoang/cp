@@ -6,7 +6,7 @@ import (
 
 func max(a ...int) int {
 	v := 0
-	for _,x := range a {
+	for _, x := range a {
 		if x > v {
 			v = x
 		}
@@ -86,9 +86,11 @@ func cherryPickup(grid [][]int) int {
 }
 
 func main() {
-	fmt.Println(cherryPickup([][]int{
-		{0, -1, -1},
-		{1, 0, -1},
-		{1, 1,  1},
-	}))
+	// fmt.Println(cherryPickup([][]int{
+	// 	{0, -1, -1},
+	// 	{1, 0, -1},
+	// 	{1, 1,  1},
+	// }))
+	a := []int{1, 2, 3}
+	fmt.Println(a)
 }

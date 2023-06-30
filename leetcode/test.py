@@ -31,34 +31,65 @@
 # B: cfg
 # C: cabcdfge
 
-def solve(A,B,C):
-    len_c = len(C)
-    dp = [0 for _ in range(len_c)]
-    if C[0] == A[0] or C[0] == B[0]:
-        dp[0] = 1
-    for i in range(1, len_c):
-        for j in range(min(i+1, len(A))):
-            k = i-j-1
-            print(j,k,i)
-            if dp[i] == 1: continue
-            if k < 0:
-                if A[:j+1] == C[:i+1]:
-                    dp[i] = 1
-                else:
-                    dp[i] = 0
-                continue
-            if k >= len(B): continue
-            if dp[i-1] == 1 and (A[j] == C[i] or B[k] == C[i]):
-                dp[i] = 1
-            else:
-                dp[i] = 0
-    print(dp)
-    return dp[len_c-1]
+# def solve(A, B, C):
+#     len_c = len(C)
+#     dp = [0 for _ in range(len_c)]
+#     if C[0] == A[0] or C[0] == B[0]:
+#         dp[0] = 1
+#     for i in range(1, len_c):
+#         for j in range(min(i+1, len(A))):
+#             k = i-j-1
+#             print(j, k, i)
+#             if dp[i] == 1:
+#                 continue
+#             if k < 0:
+#                 if A[:j+1] == C[:i+1]:
+#                     dp[i] = 1
+#                 else:
+#                     dp[i] = 0
+#                 continue
+#             if k >= len(B):
+#                 continue
+#             if dp[i-1] == 1 and (A[j] == C[i] or B[k] == C[i]):
+#                 dp[i] = 1
+#             else:
+#                 dp[i] = 0
+#     print(dp)
+#     return dp[len_c-1]
 
-print(solve('cabde', 'cfg', 'cabcdfge'))
+
+# print(solve('cabde', 'cfg', 'cabcdfge'))
 # print(solve('abc', 'abc', 'aacbbc'))
 
 # aavaa
 # bbccaa
 
 # aabbccvaaa
+
+def foo(arr):
+    n = len(arr)
+    s = sum(arr)
+    dp1 = [-1]*(s+1)
+    dp2 = [-1]*(s+1)
+    dp1[0] = 0
+    for i in range(n):
+        for k in range(s+1):
+            if k-arr[i] >= 0 and dp1[k-arr[i]] >= 0:
+                dp2[k] = max(dp2[k], dp1[k-arr[i]] + arr[i])
+            if arr[i]-k >= 0 and dp1[arr[i]-k] >= 0:
+                dp2[k] = max(dp2[k], dp1[arr[i]-k] + k)
+            if k+arr[i] <= s and dp1[k+arr[i]] >= 0:
+                dp2[k] = max(dp2[k], dp1[k+arr[i]])
+            # this is the case: we don't use arr[i] and/or we keep value of dp1[k]
+            dp2[k] = max(dp2[k], dp1[k])
+        for k in range(s+1):
+            dp1[k] = dp2[k]
+            dp2[k] = -1
+        print(dp1)
+    return dp1[0]
+
+
+# a = [102,101,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100]
+a = [50,70,1,1,1,1,1,1]
+# a = [1,1,5]
+print(foo(a))
