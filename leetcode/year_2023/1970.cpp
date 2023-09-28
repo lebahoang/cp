@@ -77,6 +77,7 @@ int solve(int r, int c, vector<vector<int>>& cells) {
     vector<int> p(n+1, 0);
     vector<int> rankAtNode(n+1, 0);
     vector<vector<int>> mat(r, vector<int>(c, -1));
+    vector<vector<int>> g(r, vector<int>(c, 0));
     vector<int> colZero = {};
     vector<int> colN = {};
     for (int i = 0; i < n; i++) {
@@ -86,7 +87,7 @@ int solve(int r, int c, vector<vector<int>>& cells) {
         if (b == 0) {
             colZero.push_back(i);
         } else if (b == c-1) {
-            colN.push_back(b);
+            colN.push_back(i);
         }
     }
     int day1 = -1;
@@ -96,22 +97,46 @@ int solve(int r, int c, vector<vector<int>>& cells) {
         if (ind > -1) {
             day1 = colZero[ind];
             day2 = val;
+            break;
         }
     }
+    // printf("day1 %d, day2 %d\n", day1, day2);
+    if (day1 == -1 || day2 == -1) {
+        return n;
+    }
+    int rs = 0;
     initDisjoinSet(n, p, rankAtNode);
     vector<vector<int>> d = {
         {-1, 0},{1, 0},{0, -1},{0, 1},
-        {-1, 1},{-1, 1},{1, -1},{1, 1}
+        {-1, 1},{-1, -1},{1, 1},{1, -1}
     };
     for (int i = 0; i < n; i++) {
         int a = cells[i][0]-1;
         int b = cells[i][1]-1;
-        if (i < day1) {
-            
-        } 
+        g[a][b] = 1;
+        for (vector<int>& x: d) {
+            int ax = a + x[0];
+            int ay = b + x[1];
+            if (ax >= 0 && ax < r && ay >= 0 && ay < c && g[ax][ay] == 1) {
+                int j = mat[ax][ay];
+                union2Subsets(i, j, p, rankAtNode);
+                // printf("I %d Join J %d\n", i, j);
+            }
+        }
+        // if (i >= day2) printf("Curernt day %d, day1 belong to %d, day2 belong to %d\n", i, findSubset(day1, p), findSubset(day2, p));
+        if (i >= day2 && findSubset(day1, p) == findSubset(day2, p)) {
+            return rs;
+        } else {
+            rs = i+1;
+        }
     }
-} 
+    return -100;
+}
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    int r = 3;
+    int c = 3;
+    vector<vector<int>> cells = {{1,2},{2,1},{3,3},{2,2}};
+    printf("%d\n", solve(r, c, cells));
     return 0;
 }
