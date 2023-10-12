@@ -30,16 +30,13 @@ def solve(n: int, m: int, k: int) -> int:
                     else:
                         continue
                 else:
-                    if j > 1:
-                        t1 = (prefix[i-1][x-1][j-1]%mod * i%mod)%mod
-                        dp[i][j][x] = (dp[i][j][x]%mod + t1)%mod
-                        t2 = (dp[i-1][j][x]%mod * i%mod)%mod
-                        dp[i][j][x] = (dp[i][j][x]%mod + t2)%mod
-                    else:
-                        if x == 1:
-                            dp[i][j][x] = 1
-                        else:
-                            continue
+                    t1 = prefix[i-1][x-1][j-1]%mod
+                    dp[i][j][x] = (dp[i][j][x]%mod + t1)%mod
+                    t2 = (sum[i-1][x]%mod - prefix[i-1][x][j-1]%mod + mod)%mod
+                    # t2 = sum[i-1][x]%mod
+                    # dp[i][j][x] = (dp[i][j][x]%mod + t2)%mod
+                    for jj in range(j, m+1):
+                        dp[i][jj][x] = (dp[i][jj][x]%mod + dp[i-1][jj][x]%mod)%mod
 
                 if j == 1:
                     prefix[i][x][j] = dp[i][j][x]
@@ -47,14 +44,17 @@ def solve(n: int, m: int, k: int) -> int:
                     t = (prefix[i][x][j-1]%mod + dp[i][j][x]%mod)%mod
                     prefix[i][x][j] = t
                 sum[i][x] = (sum[i][x]%mod + dp[i][j][x]%mod)%mod
-                print('dp[{:d}][{:d}][{:d}]'.format(i,j,x), dp[i][j][x])
-                print('prefix[{:d}][{:d}]'.format(i, x), prefix[i][x])
-                print('sum[{:d}][{:d}]'.format(i,x), sum[i][x])
+                # print('dp[{:d}][{:d}][{:d}]'.format(i,j,x), dp[i][j][x])
+                # print('prefix[{:d}][{:d}]'.format(i, x), prefix[i][x])
+                # print('sum[{:d}][{:d}]'.format(i,x), sum[i][x])
     return sum[n][k]
 
-
-n = 2
-m = 3
-k = 1
+# 60
+# n = 3
+# m = 5
+# k = 2
+n = 50
+m = 100
+k = 37
 print('n=', n, ' m=', m, ' k=', k)
 print(solve(n,m,k))
