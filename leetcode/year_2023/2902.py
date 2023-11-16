@@ -37,19 +37,32 @@ def solve(arr, l, r):
             a.append((i, freq[i]))
     dp = [0]*(r+1)
     ndp = [0]*(r+1)
-    print('1111')
-    for val, f in a:
-        # val, f = a[i]
-        for w in range(max(1, r-val), r+1):
-            if w-val< 0:
-                continue
+    for i in range(len(a)):
+        val, f = a[i]
+        for wi in range(max(0, r-val+1), r+1):
             for j in range(1, f+1):
-                if w-val*j > 0:
-                    ndp[w] = (ndp[w]%mod + dp[w - val*j]%mod)%mod
-                elif w == val*j:
-                    ndp[w] = (ndp[w]%mod + 1)%mod
-                else:
-                    break
+                if wi-val*j > 0:
+                    ndp[wi] = (ndp[wi]%mod + dp[wi - val*j]%mod)%mod
+                if wi == val*j:
+                    ndp[wi] = (ndp[wi]%mod + 1)%mod
+            y = wi-val
+            yy = wi-val*(f+1)
+            t = ndp[wi]
+            if dp[wi] > 0:
+                t = (t%mod - dp[wi]%mod + mod)%mod
+            w = wi - val
+            while w >= val:
+                t = (t%mod - dp[y]%mod + mod)%mod
+                if yy >= 1:
+                    t = (t%mod + dp[yy]%mod)%mod
+                elif yy == 0:
+                    t = (t%mod + 1)%mod
+                # print("wwww", w, dp[w], t)
+                ndp[w] = (dp[w]%mod + t%mod)%mod
+                w -= val
+                y -= val
+                yy -= val
+            
         for w in range(1, r+1):
             dp[w] = ndp[w]
         # print(i, a[i], dp)
