@@ -97,96 +97,104 @@
 # you can write to stdout for debugging purposes, e.g.
 # print("this is a debug message")
 
-def to_int(a):
-    return int(''.join([str(x) for x in a]))
-def find_duplicate_number(a):
-    for i in range(1, len(a)):
-        if a[i] == a[i-1]:
-            return i
-    return -1
-def backward_step(a, ind):
-    rs = []
-    i = ind
-    add = 1
-    while i >= 0:
-        t = a[i] + add
-        if i-1 >= 0 and t == a[i-1]:
-            t += 1
-        if t < 10:
-            a[i] = t
-            add = 0
-            break
-        i -= 1
-    if add == 1:
-        if i >= 0:
-            return a, i+1
-        else:
-            rs.append(1)
-            rs.extend(a)
-            return rs, 1
-    else:
-        return a, i+1
+# def to_int(a):
+#     return int(''.join([str(x) for x in a]))
+# def find_duplicate_number(a):
+#     for i in range(1, len(a)):
+#         if a[i] == a[i-1]:
+#             return i
+#     return -1
+# def backward_step(a, ind):
+#     rs = []
+#     i = ind
+#     add = 1
+#     while i >= 0:
+#         t = a[i] + add
+#         if i-1 >= 0 and t == a[i-1]:
+#             t += 1
+#         if t < 10:
+#             a[i] = t
+#             add = 0
+#             break
+#         i -= 1
+#     if add == 1:
+#         if i >= 0:
+#             return a, i+1
+#         else:
+#             rs.append(1)
+#             rs.extend(a)
+#             return rs, 1
+#     else:
+#         return a, i+1
 
-def solve(N, flag):
-    a = [int(x) for x in str(N)]
-    if len(a) == 1:
-        a.insert(0, 0)
-    ind = find_duplicate_number(a)
-    if ind != -1:
-        b, j = backward_step(a, ind)
-        f = True
-        for i in range(j, len(b)):
-            if f:
-                b[i] = 0
-                f = False
-            else:
-                b[i] = 1
-                f = True
-        return to_int(b)
-    else:
-        if flag == 1:
-            return N
-        x = a[-2]*10 + a[-1]
-        if x == 99:
-            x += 2
-            b, j = backward_step(a, len(a)-3)
-            f = True
-            for i in range(j, len(b)):
-                if f:
-                    b[i] = 0
-                    f = False
-                else:
-                    b[i] = 1
-                    f = True
-            return to_int(b)
-        elif x == 98:
-            x += 3
-            b, j = backward_step(a, len(a)-3)
-            # print(len(a)-3, b, j)
-            f = True
-            for i in range(j, len(b)):
-                if f:
-                    b[i] = 0
-                    f = False
-                else:
-                    b[i] = 1
-                    f = True
-            return to_int(b)
-        else:
-            x += 1
-            strx = str(x)
-            if len(strx) == 1:
-                strx = '0' + strx
-            y = [int(i) for i in strx]
-            if y[0] == y[1]:
-                x += 1
-            strx = str(x)
-            if len(strx) == 1:
-                strx = '0' + strx
-            a[-2] = int(strx[0])
-            a[-1] = int(strx[1])
-            return to_int(a)
-def solution(N):
-    return solve(N, 0)
+# def solve(N, flag):
+#     a = [int(x) for x in str(N)]
+#     if len(a) == 1:
+#         a.insert(0, 0)
+#     ind = find_duplicate_number(a)
+#     if ind != -1:
+#         b, j = backward_step(a, ind)
+#         f = True
+#         for i in range(j, len(b)):
+#             if f:
+#                 b[i] = 0
+#                 f = False
+#             else:
+#                 b[i] = 1
+#                 f = True
+#         return to_int(b)
+#     else:
+#         if flag == 1:
+#             return N
+#         x = a[-2]*10 + a[-1]
+#         if x == 99:
+#             x += 2
+#             b, j = backward_step(a, len(a)-3)
+#             f = True
+#             for i in range(j, len(b)):
+#                 if f:
+#                     b[i] = 0
+#                     f = False
+#                 else:
+#                     b[i] = 1
+#                     f = True
+#             return to_int(b)
+#         elif x == 98:
+#             x += 3
+#             b, j = backward_step(a, len(a)-3)
+#             # print(len(a)-3, b, j)
+#             f = True
+#             for i in range(j, len(b)):
+#                 if f:
+#                     b[i] = 0
+#                     f = False
+#                 else:
+#                     b[i] = 1
+#                     f = True
+#             return to_int(b)
+#         else:
+#             x += 1
+#             strx = str(x)
+#             if len(strx) == 1:
+#                 strx = '0' + strx
+#             y = [int(i) for i in strx]
+#             if y[0] == y[1]:
+#                 x += 1
+#             strx = str(x)
+#             if len(strx) == 1:
+#                 strx = '0' + strx
+#             a[-2] = int(strx[0])
+#             a[-1] = int(strx[1])
+#             return to_int(a)
+# def solution(N):
+#     return solve(N, 0)
 
-print(solution(666))
+# print(solution(666))
+
+n = 10
+m = 10
+for i in range(1, n+1):
+    t = []
+    for j in range(1, m+1):
+        t.append(i*j)
+    print(t)
