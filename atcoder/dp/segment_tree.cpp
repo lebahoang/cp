@@ -118,7 +118,7 @@ private:
         // [start, end] is an updating index interval of segment tree
         // [l, r] is user input index interval
         if (lazy[ind] != 0) {
-            tree[ind] = updateFunc(tree[ind], lazy[ind]);
+            tree[ind] = updateFunc(tree[ind], (end - start + 1) * lazy[ind]);
             if (start != end) {
                 lazy[2*ind+1] = updateFunc(lazy[2*ind+1], lazy[ind]);
                 lazy[2*ind+2] = updateFunc(lazy[2*ind+2], lazy[ind]);
@@ -128,7 +128,7 @@ private:
             
         if (start > r || end < l) return;
         if (start >= l && end <= r) {
-            tree[ind] = updateFunc(tree[ind], value);
+            tree[ind] = updateFunc(tree[ind], (end - start + 1) * value);
             if (start != end) {
                 lazy[2*ind+1] = updateFunc(lazy[2*ind+1], value);
                 lazy[2*ind+2] = updateFunc(lazy[2*ind+2], value);
@@ -143,7 +143,7 @@ private:
     };
     ll _query(int ind, int start, int end, int l, int r) {
         if (lazy[ind] != 0) {
-            tree[ind] = updateFunc(tree[ind], lazy[ind]);
+            tree[ind] = updateFunc(tree[ind], (end - start + 1) * lazy[ind]);
             if (start != end) {
                 lazy[2*ind+1] = updateFunc(lazy[2*ind+1], lazy[ind]);
                 lazy[2*ind+2] = updateFunc(lazy[2*ind+2], lazy[ind]);
