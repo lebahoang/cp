@@ -106,10 +106,8 @@ public:
     };
 };
 
-
-int main() {
+int solve(vector<int>& arr) {
     ll mod = 1e9+7;
-    vector<int> arr = {1,2,3,4,5,2,3,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3};
     int n = arr.size();
     LazySegmentTree tree(n+5, (getTwoNodeValueFunc)getTotal, (updateOneNodeValueFunc)updateTotal);
     vector<int> lastAppear(100005, -1);
@@ -122,7 +120,7 @@ int main() {
             if (lastInd+1 <= i-1) {
                 ll y = (i-1)-(lastInd+1)+1;
                 ll d = tree.query(lastInd+1, i-1);
-                printf("I %d, lastInd %d,Y %lld, d %lld\n", i, lastInd, y, d);
+                // printf("I %d, lastInd %d,Y %lld, d %lld\n", i, lastInd, y, d);
                 total[i] = (total[i-1]%mod + y%mod + (2*d)%mod)%mod;
             } else {
                 total[i] = total[i-1]%mod;
@@ -131,16 +129,14 @@ int main() {
         } else {
             total[i] = 1;
         }
-        if (lastInd+1 <= i-1) {
-            tree.update(1, lastInd+1, i);
-            printf("Test query AAA %lld\n", tree.query(lastInd+1, i));
-        } else {
-            tree.update(1, i, i);
-            printf("Test query BBB %lld\n", tree.query(i, i));
-        }
+        tree.update(1, lastInd+1, i);
         lastAppear[num] = i;
         ans = (ans%mod + total[i]%mod)%mod;
     }
-    printf("Ans: %lld\n", ans);
+    return (int)ans;
+}
+int main() {
+    vector<int> arr = {1,2,3,4,5,2,3,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3};
+    printf("Ans: %d\n", solve(arr));
     return 0;
 }
