@@ -52,7 +52,7 @@ private:
             return;
         }
 
-        if (start >= l && end <= r) {
+        if (l <= start && end <= r) {
             tree[ind] = updateFunc(tree[ind], value);
             return;
         }
@@ -68,7 +68,7 @@ private:
             return NEG_INF;
         }
 
-        if (start >= l && end <= r) {
+        if (l <= start && end <= r) {
             return tree[ind];
         }
 
@@ -89,6 +89,9 @@ public:
     };
     void update(ll value, int ind){
         return _update(value, 0, 0, numItems-1, ind, ind);
+    };
+    void updateRange(ll value, int l, int r){
+        return _update(value, 0, 0, numItems-1, l, r);
     };
     ll query(int l, int r) {
         return _query(0, 0, numItems-1, l, r);
