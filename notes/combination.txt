@@ -1,0 +1,25 @@
+”Boxes and balls” is a useful model, where we count the ways to place k balls in n
+boxes. Let us consider three scenarios:
+
+Scenario 1: Each box can contain at most one ball.
+  In this scenario, the answer is directly the binomial coefficient C(n,k)
+
+
+Scenario 2: A box can contain multiple balls.
+  The process of placing the balls in the boxes can be represented as a string
+that consists of symbols ”o” and ”→”. Initially, assume that we are standing at
+the leftmost box. The symbol ”o” means that we place a ball in the current box,
+and the symbol ”→” means that we move to the next box to the right.
+Using this notation, each solution is a string that contains k times the symbol
+”o” and n−1 times the symbol ”→”. For example, the upper-right solution in the
+above picture corresponds to the string ”→ → o → o →”. Thus, the number of
+solutions is C(k+n-1, k)
+
+
+Scenario 3: Each box may contain at most one ball, and in addition, no two
+adjacent boxes may both contain a ball.
+  In this scenario, we can assume that k balls are initially placed in boxes and
+there is an empty box between each two adjacent boxes. The remaining task is
+to choose the positions for the remaining empty boxes. There are n−2k +1 such
+boxes and k + 1 positions for them. Thus, using the formula of scenario 2, the
+number of solutions is C(n-k+1, n-2k+1)
