@@ -1,5 +1,4 @@
 import math
-import sortedcontainers as c
 NEG_INF = int(-1e12)
 
 
@@ -10,6 +9,7 @@ class SimpleSegmentTree:
         self.getFunc = get
         self.updateFunc = update
         self.buildTree()
+        print(len(self.tree))
 
     def getNumberOfNodes(self):
         x = math.ceil(math.log2(self.numItems))
@@ -66,37 +66,10 @@ def update(_, val):
     return val
 
 
-def solve(qs):
-    rs = []
-    l = c.SortedList([])
-    tree = SimpleSegmentTree(50005, get, update)
-    for q in qs:
-        if len(q) == 2:
-            _, x = q
-            ind = l.bisect_left(x)-1
-            if ind >= 0:
-                y = l[ind]
-                tree.update(x-y, x)
-            else:
-                tree.update(x, x)
-            if ind+1 < len(l):
-                y = l[ind+1]
-                tree.update(y-x, y)
-            l.add(x)
-        else:
-            _, x, sz = q
-            ind = l.bisect_left(x)-1
-            if ind >= 0:
-                y = l[ind]
-                maxV = max(tree.query(0, y), x-y)
-            else:
-                maxV = x
-            if maxV >= sz:
-                rs.append(True)
-            else:
-                rs.append(False)
-    return rs
-
-
-qs = [[1,3],[2,4,2]]
-print(solve(qs))
+n = 7000000
+tree = SimpleSegmentTree(n+5, get, update)
+tree.update(10, n)
+tree.update(3, 2)
+print(tree.query(0, n))
+tree.update(300, 2)
+print(tree.query(0, n))
