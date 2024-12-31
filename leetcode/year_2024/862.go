@@ -39,6 +39,7 @@ func solve(arr []int, k int) int {
 	n := len(arr)
 	prefix := make([]int, n)
 	maxs := make([]int, n)
+	maxsSum := make([]int, n)
 	cnt := 0
 	for i, val := range arr {
 		if i == 0 {
@@ -49,25 +50,59 @@ func solve(arr []int, k int) int {
 		if i == 0 || arr[i-1] >= 0 {
 			cnt++
 			maxs[i] = cnt
+			maxsSum[i] = prefix[i]
+			if i-cnt-1 >= 0 {
+				maxsSum[i] -= prefix[i-cnt-1]
+			}
 		} else {
 			cnt = 1
 			maxs[i] = cnt
+			maxsSum[i] = val
 		}
-		fmt.Println(i-maxs[i]+1, i)
+		// fmt.Println(i-maxs[i]+1, i)
 		x := find(i-maxs[i]+1, i, k, prefix, C)
-		fmt.Println(i-maxs[i]+1, i, x)
+		// fmt.Println(i-maxs[i]+1, i, x)
 		rs = min(rs, x)
 	}
-	fmt.Println(maxs)
+	fmt.Println(maxs, maxsSum, rs)
 	if rs == C {
-		return -1
+		for i, ml := range maxs {
+			j := i
+			jml := ml
+			kk := k
+			x := 0
+			for {
+				if j-jml < 0 {
+					break
+				}
+				kk -= prefix[j] - prefix[j-jml]
+				x += jml
+				t := find(j-jml-maxs[j-jml]+1, j-jml, kk, prefix, C)
+				if t < C {
+					x += t
+					rs = min(rs, x)
+					break
+				} else {
+					j -= jml
+					jml = maxs[j]
+				}
+			}
+			// fmt.Println(i, ml, rs)
+		}
+		if rs == C {
+			return -1
+		}
 	}
 	return rs
 }
 func main() {
 	// arr := []int{-34, 37, 51, 3, -12, -50, 51, 100, -47, 99, 34, 14, -13, 89, 31, -14, -44, 23, -38, 6}
 	// k := 151
-	arr := []int{56, -21, 56, 35, -9}
-	k := 61
+	// arr := []int{56, -21, 56, 35, -9}
+	// k := 61
+	// arr := []int{31, 63, -38, 43, 65, 74, 90, -23, 45, 22}
+	// k := 341
+	arr := []int{2, -1, 2}
+	k := 3
 	fmt.Println(solve(arr, k))
 }
