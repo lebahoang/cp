@@ -5,145 +5,112 @@ import (
 	"sort"
 )
 
-func key(a int, b int) string {
-	return fmt.Sprintf("%d;%d", a, b)
-}
-func find(cps [][]int, n int, val int) int {
-	if cps[0][1] >= val {
-		return 0
+func cmp(a []int, b []int) int {
+	if a[1] < b[1] {
+		return -1
+	} else if a[1] > b[1] {
+		return 1
 	}
-	if cps[n-1][1] <= val {
-		return n - 1
+	return a[0] - b[0]
+}
+
+func getKey(a []int) string {
+	return fmt.Sprintf("[%d,%d]", a[0], a[1])
+}
+
+func find(val int, m int, arr [][]int) int {
+	if val <= arr[0][0] {
+		return 0
+	} else if val > arr[m-1][0] {
+		return -1
 	}
 	l := 0
-	r := n - 1
+	r := m - 1
 	for {
+		if l > r {
+			break
+		}
 		mid := (l + r) / 2
-		if cps[mid][1] <= val && cps[mid+1][1] > val {
-			return mid
-		} else if cps[mid][1] > val {
+		if val > arr[mid][0] && val <= arr[mid+1][0] {
+			return mid + 1
+		} else if val <= arr[mid][0] {
 			r = mid - 1
 		} else {
 			l = mid + 1
 		}
 	}
+	return -1
 }
-func solve(n int, cps [][]int) int64 {
-	sort.Slice(cps, func(i, j int) bool {
-		if cps[i][1] < cps[j][1] {
+func solve(n int, a [][]int) int64 {
+	d := map[string]int{}
+	d2 := map[string]int64{}
+	arr := [][]int{}
+	for _, v := range a {
+		it := []int{min(v[0], v[1]), max(v[0], v[1])}
+		k := getKey(it)
+		if _, ok := d[k]; !ok {
+			d[k] = 1
+			d2[k] = 0
+			arr = append(arr, it)
+		} else {
+			d[k]++
+		}
+	}
+	sort.Slice(arr, func(i, j int) bool {
+		if arr[i][0] < arr[j][0] {
 			return true
-		} else if cps[i][1] > cps[j][1] {
+		} else if arr[i][0] > arr[j][0] {
 			return false
 		}
-		return cps[i][0] < cps[j][0]
+		return arr[i][1] < arr[j][1]
 	})
-
-	pc := map[string]int{}
-	p := make([][]int, n+3)
-	pp := make([][][]int, n+3)
-	mem := make([]int, n+3)
-	for i := 0; i <= n; i++ {
-		p[i] = []int{}
-		mem[i] = -1
-	}
-	length := len(cps)
-	for i, x := range cps {
-		p[x[0]] = append(p[x[0]], x[1])
-		pp[x[1]] = append(pp[x[1]], []int{x[0], i})
-		k := key(x[0], x[1])
-		if _, ok := pc[k]; !ok {
-			pc[k] = 1
+	m := len(arr)
+	b := make([][]int, m)
+	for i := m - 1; i >= 0; i-- {
+		if i == m-1 {
+			b[i] = []int{i, m}
 		} else {
-			pc[k]++
-		}
-	}
-	indexs := make([]int, length)
-	cur := -1
-	for i := 1; i <= n; i++ {
-		if len(pp[i]) > 0 {
-			sort.Slice(pp[i], func(x, y int) bool {
-				return pp[i][x][0] < pp[i][y][0]
-			})
-			for j, it := range pp[i] {
-				if j-1 >= 0 {
-					indexs[it[1]] = pp[i][j-1][1]
-				} else {
-					if cur > -1 {
-						indexs[it[1]] = pp[cur][len(pp[cur])-1][1]
-					} else {
-						indexs[it[1]] = 1
-					}
-				}
+			t1 := cmp(arr[i], arr[b[i+1][0]])
+			t2 := -1
+			if b[i+1][1] < m {
+				t2 = cmp(arr[i], arr[b[i+1][1]])
 			}
-			cur = i
-		}
-	}
-	var rs int64 = 0
-	// a := map[int]int{}
-	b := map[int]int{}
-	start := 1
-	end := 1
-	for {
-		if start > n {
-			break
-		}
-		_, ok := b[end]
-		if end <= n && !ok {
-			if len(p[end]) > 0 {
-				// if _, ok = a[end]; !ok {
-				// 	a[end] = 1
-				// } else {
-				// 	a[end]++
-				// }
-				for _, v := range p[end] {
-					if _, ok = b[v]; !ok {
-						b[v] = 1
-					} else {
-						b[v]++
-					}
-				}
-			}
-			end++
-		} else {
-			if mem[start] == -1 {
-				mem[start] = end - 1
-				rs += int64(end - start)
-			}
-			if len(p[start]) > 0 {
-				// a[start]--
-				// if a[start] == 0 {
-				// 	delete(a, start)
-				// }
-				for _, v := range p[start] {
-					b[v]--
-					if b[v] == 0 {
-						delete(b, v)
-					}
-				}
-			}
-			start++
-			if start > end {
-				end = start
-			}
-		}
-	}
-	fmt.Println(mem[1 : n+1])
-	fmt.Println(indexs)
-	var ans int64 = rs
-	for i, x := range cps {
-		k := key(x[0], x[1])
-		if pc[k] == 1 {
-			ind := indexs[i]
-			if cps[ind][0]+1 <= x[0] {
-				ans = max(ans, rs+int64((x[0]-cps[ind][0])*(mem[x[0]+1]-x[1]+1)))
-				fmt.Println(x, ind, rs, int64((x[0]-cps[ind][0])*(mem[x[0]+1]-x[1]+1)))
+			if t1 < 0 && t2 < 0 {
+				b[i] = []int{i, b[i+1][0]}
+			} else if t1 > 0 && t2 < 0 {
+				b[i] = []int{b[i+1][0], i}
 			} else {
-				ans = max(ans, rs+int64((cps[ind][0]+1)*(mem[cps[ind][0]+1]-cps[ind][0])))
-				fmt.Println(x, ind, rs, int64((cps[ind][0]+1)*(mem[cps[ind][0]+1]-cps[ind][0])))
+				b[i] = []int{b[i+1][0], b[i+1][1]}
 			}
 		}
 	}
-	fmt.Println(ans)
+	// fmt.Println(b)
+	t := int64(0)
+	for i := 1; i <= n; i++ {
+		ind := find(i, m, arr)
+		// fmt.Println(i, ind)
+		if ind > -1 {
+			k := getKey(arr[b[ind][0]])
+			if d[k] == 1 {
+				if b[ind][1] < m {
+					d2[k] += int64(arr[b[ind][1]][1] - 1 - arr[b[ind][0]][1] + 1)
+				} else {
+					d2[k] += int64(n - arr[b[ind][0]][1] + 1)
+				}
+			}
+			t += int64(arr[b[ind][0]][1] - 1 - i + 1)
+		} else {
+			t += int64(n - i + 1)
+		}
+		// fmt.Println("T", t)
+	}
+	ans := t
+	// fmt.Println("ANS", t, d2)
+	for i := 0; i < m; i++ {
+		k := getKey(arr[i])
+		ans = max(ans, t+d2[k])
+	}
+	// fmt.Println("FINAL ANS:", ans)
 	return ans
 }
 
